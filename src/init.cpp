@@ -17,7 +17,34 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
-unique_ptr<vector<vector<string>>> ParsePatterns(ifstream &input_file) {
+bool CheckTokens(string &s, const unique_ptr<map<string, vector<string>>> &m_token,
+                 const unique_ptr<map<string, vector<string>>> &v_token) {
+  if ((s == "V") ||
+      (s.at(0) == '!') ||
+      (s.at(0) == '*') ||
+      (s.front() == '\"' && s.back() == '\"')) {
+    return true;
+  }
+  if (s.size() > 3 && s.substr(0, 3) == "to_") {
+    for (auto &&t : *v_token) {
+      if (s == t.first) {
+        return true;
+      }
+    }
+  } else {
+    for (auto &&t : *m_token) {
+      if (s == t.first) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+unique_ptr<vector<vector<string>>> ParsePatterns(ifstream &input_file,
+                                                 const unique_ptr<map<string, vector<string>>> &m_token,
+                                                 const unique_ptr<map<string, vector<string>>> &v_token) {
   vector<vector<string>> v{};
 
   string buffer_line;
@@ -31,7 +58,9 @@ unique_ptr<vector<vector<string>>> ParsePatterns(ifstream &input_file) {
     string buffer_token{};
     stringstream ss(buffer_line);
     while (ss >> buffer_token) {
-      v.at(i).emplace_back(buffer_token);
+      if (CheckTokens(buffer_token, m_token, v_token)) {
+        v.at(i).emplace_back(buffer_token);
+      }
     }
     ++i;
   }
@@ -118,23 +147,18 @@ unique_ptr<map<string, vector<string>>> ConstructVerbToken(const vector<string> 
   return ptr;
 }
 
-string ReadTokensVersionInfo(const vector<string> &in) {
-  for (auto &&a : in) {
-    if (a.find(":", a.size() - 1) != string::npos) {
-      return "";
-    }
-    size_t i = a.find("VERSION=");
-    if (i != string::npos) {
-      return a.substr(8, a.size());
-    }
-  }
-  return "";
-}
-
-string ReadPatternsVersionInfo(const vector<vector<string>> &in) {
-  string version_line = in.at(0).at(0);
-  if (version_line.find("VERSION=") == string::npos) {
+string ReadTokensVersion(const vector<string> &in) {
+  string version_line = in.at(0);
+  if (version_line.find("VERSION") == string::npos) {
     return "";
   }
-  return version_line.substr(8, version_line.size());
+  return version_line.substr(version_line.find("=") + 1, version_line.size());
+}
+
+string ReadPatternsVersion(const vector<vector<string>> &in) {
+  string version_line = in.at(0).at(0);
+  if (version_line.find("VERSION") == string::npos) {
+    return "";
+  }
+  return version_line.substr(version_line.find("=") + 1, version_line.size());
 }

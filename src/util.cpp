@@ -63,8 +63,7 @@ bool CheckStringLength(const string &s, const size_t size) {
   return s.size() > size;
 }
 
-bool SearchVerbTokens(const string &s,
-                      const unique_ptr<map<string, vector<string>>> &m) {
+bool SearchVerbTokens(const string &s, const unique_ptr<map<string, vector<string>>> &m) {
   for (auto &&m_e : *m) {
     for (auto &&v_e : m_e.second) {
       if (v_e == s) {
@@ -75,9 +74,7 @@ bool SearchVerbTokens(const string &s,
   return false;
 }
 
-bool SearchVerbTokens(const string &s,
-                      const unique_ptr<map<string, vector<string>>> &m,
-                      const string cat) {
+bool SearchVerbTokens(const string &s, const unique_ptr<map<string, vector<string>>> &m, const string cat) {
   try {
     m->at(cat);
   } catch(std::out_of_range) {

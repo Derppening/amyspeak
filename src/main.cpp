@@ -27,129 +27,7 @@ using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
-const string kBuildString =
-    to_string(MAJOR_VERSION) + "." +
-        to_string(MINOR_VERSION) + "." +
-        to_string(BUILD_NUMBER);
-
-void DoProcessing(vector<string> *,
-                  const unique_ptr<map<string, vector<string>>> &,
-                  const unique_ptr<map<string, vector<string>>> &);
-
-int main(int argc, char *argv[]) {
-  cout << "Amyspeak " << kBuildString << endl;
-
-  // read input arguments
-  vector<string> argvec;
-  if (argc > 1) {
-    for (int i = 1; i < argc; i++) {
-      argvec.emplace_back(argv[i]);
-    }
-  }
-
-  string token_src = "../tokens";
-  string pattern_src = "../patterns";
-  for (size_t i = 0; i < argvec.size(); ++i) {
-    if (argvec.at(i) == "-t") {
-      token_src = argvec.at(++i);
-    } else if (argvec.at(i) == "-p") {
-      pattern_src = argvec.at(++i);
-    } else if (argvec.at(i).substr(0, 6) == "--token=") {
-      token_src = argvec.at(i).substr(6, argvec.at(i).size());
-    } else if (argvec.at(i).substr(0, 10) == "--pattern=") {
-      pattern_src = argvec.at(++i);
-    }
-  }
-  if (token_src.at(0) != '.' && token_src.at(1) != '.') {
-    token_src.insert(0, "./");
-  }
-  if (pattern_src.at(0) != '.' && pattern_src.at(1) != '.') {
-    pattern_src.insert(0, "./");
-  }
-
-  cout << "Reading tokens from " << token_src << endl;
-
-  unique_ptr<ifstream> token_file(new ifstream(token_src));
-  if (!token_file->is_open()) {
-    cout << "Error: Tokens file not found. Exiting." << endl;
-    return 0;
-  }
-
-  auto tokens = ParseTokens(*token_file);
-
-  cout << "Initializing tokens... ";
-  auto time = steady_clock::now();
-
-  auto token_pos = ParseTokenCategories(*tokens);
-  auto match_tokens = ConstructMatchingTokens(*tokens, *token_pos);
-  cout << "Done." << endl;
-
-  cout << "Initializing verb tokens... ";
-  unique_ptr<map<string, vector<string>>> match_verbs = nullptr;
-  for (auto &&i : *token_pos) {
-    if (i.second == "verb") {
-      match_verbs = ConstructVerbToken(*tokens, i.first);
-      break;
-    }
-  }
-  if (match_verbs == nullptr) {
-    cout << "Not found." << endl;
-  } else {
-    cout << "Done." << endl;
-  }
-  const string token_version_string = ReadTokensVersionInfo(*tokens);
-
-  tokens.reset(nullptr);
-  token_file.reset(nullptr);
-  token_pos.reset(nullptr);
-
-  cout << "Reading patterns from " << pattern_src << endl;
-
-  unique_ptr<ifstream> pattern_file(new ifstream(pattern_src));
-  if (!pattern_file->is_open()) {
-    cout << "Error: Patterns file not found. Exiting." << endl;
-    return 0;
-  }
-  cout << "Initializing patterns... ";
-  auto patterns = ParsePatterns(*pattern_file);
-  const string pattern_version_string = ReadPatternsVersionInfo(*patterns);
-  cout << "Done." << endl;
-
-  pattern_file.reset(nullptr);
-
-  if (token_version_string != "") {
-    cout << "Tokens library version: " << token_version_string << endl;
-  }
-  if (pattern_version_string != "") {
-    cout << "Patterns library version: " << pattern_version_string << endl;
-  }
-
-  auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
-  cout << setprecision(4) << "Initialization complete. Took "
-       << time_taken.count() << " ms." << endl << endl;
-  cout << "Type 'q' to quit" << endl;
-
-  while (true) {
-    cout << "> ";
-    string input;
-    getline(cin, input);
-
-    if (input == "q") break;
-
-    string buf;
-    stringstream ss_buf(input);
-    vector<string> input_tokens;
-    while (ss_buf >> buf) {
-      input_tokens.emplace_back(buf);
-    }
-
-    // do processing
-    DoProcessing(&input_tokens, match_tokens, match_verbs);
-
-    OutputTokens(input_tokens);
-  }
-  return 0;
-}
+const string kBuildString = to_string(MAJOR_VERSION) + "." + to_string(MINOR_VERSION);
 
 void DoProcessing(vector<string> *i,
                   const unique_ptr<map<string, vector<string>>> &m_token,
@@ -207,4 +85,129 @@ void DoProcessing(vector<string> *i,
       }
     }
   }
+}
+
+void OutputHelp(const char c[]) {
+  cout << "Usage: " << c << " [OPTION]=[FILE]..." << endl << endl;
+  cout << "  -t, --token=\t\tset token file path" << endl;
+  cout << "  -p, --pattern=\tset pattern file path" << endl;
+  cout << "      --help\t\tdisplay this help and exit" << endl;
+}
+
+int main(int argc, char *argv[]) {
+  cout << "Amyspeak " << kBuildString << endl;
+
+  // read input arguments
+  vector<string> argvec{};
+  if (argc > 1) {
+    for (int i = 1; i < argc; i++) {
+      argvec.emplace_back(argv[i]);
+    }
+  }
+
+  string token_src = "../tokens";
+  string pattern_src = "../patterns";
+  for (size_t i = 0; i < argvec.size(); ++i) {
+    if (argvec.at(i) == "-t") {
+      token_src = argvec.at(++i);
+    } else if (argvec.at(i) == "-p") {
+      pattern_src = argvec.at(++i);
+    } else if (argvec.at(i).substr(0, 6) == "--token=") {
+      token_src = argvec.at(i).substr(6, argvec.at(i).size());
+    } else if (argvec.at(i).substr(0, 10) == "--pattern=") {
+      pattern_src = argvec.at(++i);
+    } else if (argvec.at(i) == "--help") {
+      OutputHelp(argv[0]);
+      return 0;
+    }
+  }
+  if (token_src.at(0) != '.' && token_src.at(1) != '.') {
+    token_src.insert(0, "./");
+  }
+  if (pattern_src.at(0) != '.' && pattern_src.at(1) != '.') {
+    pattern_src.insert(0, "./");
+  }
+
+  cout << "Reading tokens from " << token_src << endl;
+
+  unique_ptr<ifstream> token_file(new ifstream(token_src));
+  if (!token_file->is_open()) {
+    cout << "Error: Tokens file not found. Exiting." << endl;
+    return 0;
+  }
+
+  auto tokens = ParseTokens(*token_file);
+
+  cout << "Initializing tokens... ";
+  auto time = steady_clock::now();
+
+  auto token_pos = ParseTokenCategories(*tokens);
+  auto match_tokens = ConstructMatchingTokens(*tokens, *token_pos);
+  cout << "Done." << endl;
+
+  cout << "Initializing verb tokens... ";
+  unique_ptr<map<string, vector<string>>> match_verbs = nullptr;
+  for (auto &&i : *token_pos) {
+    if (i.second == "verb") {
+      match_verbs = ConstructVerbToken(*tokens, i.first);
+      break;
+    }
+  }
+  if (match_verbs == nullptr) {
+    cout << "Not found." << endl;
+  } else {
+    cout << "Done." << endl;
+  }
+  const string token_version_string = ReadTokensVersion(*tokens);
+
+  tokens.reset(nullptr);
+  token_file.reset(nullptr);
+  token_pos.reset(nullptr);
+
+  cout << "Reading patterns from " << pattern_src << endl;
+
+  unique_ptr<ifstream> pattern_file(new ifstream(pattern_src));
+  if (!pattern_file->is_open()) {
+    cout << "Error: Patterns file not found. Exiting." << endl;
+    return 0;
+  }
+  cout << "Initializing patterns... ";
+  auto patterns = ParsePatterns(*pattern_file, match_tokens, match_verbs);
+  const string pattern_version_string = ReadPatternsVersion(*patterns);
+  cout << "Done." << endl;
+
+  pattern_file.reset(nullptr);
+
+  if (token_version_string != "") {
+    cout << "Tokens library version: " << token_version_string << endl;
+  }
+  if (pattern_version_string != "") {
+    cout << "Patterns library version: " << pattern_version_string << endl;
+  }
+
+  auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
+  cout << setprecision(4) << "Initialization complete. Took "
+       << time_taken.count() << " ms." << endl << endl;
+  cout << "Type 'q' to quit" << endl;
+
+  while (true) {
+    cout << "> ";
+    string input;
+    getline(cin, input);
+
+    if (input == "q") break;
+
+    string buf;
+    stringstream ss_buf(input);
+    vector<string> input_tokens;
+    while (ss_buf >> buf) {
+      input_tokens.emplace_back(buf);
+    }
+
+    // do processing
+    DoProcessing(&input_tokens, match_tokens, match_verbs);
+
+    OutputTokens(input_tokens);
+  }
+  return 0;
 }
