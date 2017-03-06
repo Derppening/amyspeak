@@ -1,0 +1,16 @@
+VERSION=1.0
+
+// pattern !(modifier)
+// modifiers:
+// l=n: concatenate wildcards of lengths over n
+pronoun * !l=8
+preposition * !l=8
+article * !l=8
+single_match * !l=8
+"what" to_be
+"and" demonstrative
+to_go *
+V preposition
+V demonstrative
+V pronoun
+V pronoun to_be

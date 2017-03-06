@@ -1,0 +1,8 @@
+#ifndef AMYSPEAK_VERSION_
+#define AMYSPEAK_VERSION_
+
+#define MAJOR_VERSION 0
+#define MINOR_VERSION 2
+#define BUILD_NUMBER 205
+
+#endif //AMYSPEAK_VERSION_

@@ -1,0 +1,42 @@
+VERSION=1.0
+
+pronoun:
+i
+you
+he
+she
+it
+we
+they
+
+verb:
+// token_name present present_he present_cont past past_par future future_par
+to_be be am are is was were will would
+to_go go goes going went gone
+to_say say says saying said
+to_think think thinks thinking thought
+to_want want wants wanting wanted
+
+preposition:
+to
+up
+on
+in
+into
+
+article:
+a
+an
+the
+
+demonstrative:
+this
+that
+these
+those
+
+single_match:
+// matches will guarantee token merge
+one
+no
+not
