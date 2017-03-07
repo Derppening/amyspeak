@@ -18,6 +18,7 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
+namespace {
 bool CheckTokens(string &s, const unique_ptr<map<string, vector<string>>> &m_token,
                  const unique_ptr<map<string, vector<string>>> &v_token) {
   if ((s == "V") ||
@@ -42,6 +43,7 @@ bool CheckTokens(string &s, const unique_ptr<map<string, vector<string>>> &m_tok
 
   return false;
 }
+}  // namespace
 
 unique_ptr<vector<vector<string>>> ParsePatterns(ifstream &input_file,
                                                  const unique_ptr<map<string, vector<string>>> &m_token,
