@@ -22,7 +22,7 @@ using std::ifstream;
 using std::map;
 using std::setprecision;
 using std::size_t;
-using std::stoi;
+using std::stoul;
 using std::string;
 using std::stringstream;
 using std::to_string;
@@ -102,7 +102,7 @@ void DoProcessing(vector<string> *i,
       if (modifier != "") {
         ++l;
         if (modifier.substr(0, 2) == "l=") {
-          MergeTokens(i, it, stoi(modifier.substr(2, modifier.size())));
+          MergeTokens(i, it, stoul(modifier.substr(2, modifier.size())));
         } else {
           MergeTokens(i, it);
         }
