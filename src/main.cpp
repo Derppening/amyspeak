@@ -21,6 +21,7 @@ using std::endl;
 using std::ifstream;
 using std::map;
 using std::setprecision;
+using std::size_t;
 using std::string;
 using std::stringstream;
 using std::to_string;
@@ -88,15 +89,15 @@ void DoProcessing(vector<string> *i,
 }
 
 void OutputHelp(const char c[]) {
-  cout << "Usage: " << c << " [OPTION]=[FILE]..." << endl << endl;
-  cout << "  -t, --token=\t\tset token file path" << endl;
-  cout << "  -p, --pattern=\tset pattern file path" << endl;
+  cout << "Usage: " << c << " [OPTION]..." << endl;
+  cout << "Converts a sentence to line-delimited phrases" << endl << endl;
+  cout << "  -t, --token=[FILE]\tset token file path to [FILE]" << endl;
+  cout << "  -p, --pattern=[FILE]\tset pattern file path to [FILE]" << endl;
   cout << "      --help\t\tdisplay this help and exit" << endl;
+  cout << "      --version\t\toutput version information and exit" << endl;
 }
 
 int main(int argc, char *argv[]) {
-  cout << "Amyspeak " << kBuildString << endl;
-
   // read input arguments
   vector<string> argvec{};
   if (argc > 1) {
@@ -105,6 +106,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // analyze command line switches
   string token_src = "../tokens";
   string pattern_src = "../patterns";
   for (size_t i = 0; i < argvec.size(); ++i) {
@@ -119,6 +121,11 @@ int main(int argc, char *argv[]) {
     } else if (argvec.at(i) == "--help") {
       OutputHelp(argv[0]);
       return 0;
+    } else if (argvec.at(i) == "--version") {
+      cout << "Amyspeak " << kBuildString << endl;
+      cout << "Copyright (C) 2017 Derppening" << endl;
+      cout << "Written by David Mak." << endl;
+      return 0;
     }
   }
   if (token_src.at(0) != '.' && token_src.at(1) != '.') {
@@ -129,22 +136,30 @@ int main(int argc, char *argv[]) {
   }
 
   cout << "Reading tokens from " << token_src << endl;
+  cout << "Reading patterns from " << pattern_src << endl;
 
+  // see if the files exist
   unique_ptr<ifstream> token_file(new ifstream(token_src));
   if (!token_file->is_open()) {
     cout << "Error: Tokens file not found. Exiting." << endl;
     return 0;
   }
+  unique_ptr<ifstream> pattern_file(new ifstream(pattern_src));
+  if (!pattern_file->is_open()) {
+    cout << "Error: Patterns file not found. Exiting." << endl;
+    return 0;
+  }
 
-  auto tokens = ParseTokens(*token_file);
-
-  cout << "Initializing tokens... ";
   auto time = steady_clock::now();
 
+  // read and save normal tokens
+  cout << "Initializing tokens... ";
+  auto tokens = ParseTokens(*token_file);
   auto token_pos = ParseTokenCategories(*tokens);
   auto match_tokens = ConstructMatchingTokens(*tokens, *token_pos);
   cout << "Done." << endl;
 
+  // read and save verb tokens
   cout << "Initializing verb tokens... ";
   unique_ptr<map<string, vector<string>>> match_verbs = nullptr;
   for (auto &&i : *token_pos) {
@@ -164,13 +179,7 @@ int main(int argc, char *argv[]) {
   token_file.reset(nullptr);
   token_pos.reset(nullptr);
 
-  cout << "Reading patterns from " << pattern_src << endl;
-
-  unique_ptr<ifstream> pattern_file(new ifstream(pattern_src));
-  if (!pattern_file->is_open()) {
-    cout << "Error: Patterns file not found. Exiting." << endl;
-    return 0;
-  }
+  // read and save patterns
   cout << "Initializing patterns... ";
   auto patterns = ParsePatterns(*pattern_file, match_tokens, match_verbs);
   const string pattern_version_string = ReadPatternsVersion(*patterns);

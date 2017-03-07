@@ -10,6 +10,7 @@
 using std::cout;
 using std::endl;
 using std::map;
+using std::size_t;
 using std::string;
 using std::transform;
 using std::unique_ptr;
@@ -77,7 +78,7 @@ bool SearchVerbTokens(const string &s, const unique_ptr<map<string, vector<strin
 bool SearchVerbTokens(const string &s, const unique_ptr<map<string, vector<string>>> &m, const string cat) {
   try {
     m->at(cat);
-  } catch(std::out_of_range) {
+  } catch (std::out_of_range) {
     return false;
   }
   for (auto &&v_e : m->at(cat)) {

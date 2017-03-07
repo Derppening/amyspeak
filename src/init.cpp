@@ -12,6 +12,7 @@ using std::ifstream;
 using std::make_unique;
 using std::map;
 using std::pair;
+using std::size_t;
 using std::stringstream;
 using std::string;
 using std::unique_ptr;
