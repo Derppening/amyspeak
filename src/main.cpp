@@ -29,8 +29,6 @@ using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
-const string kBuildString = to_string(MAJOR_VERSION) + "." + to_string(MINOR_VERSION);
-
 void DoProcessing(vector<string> *i,
                   const unique_ptr<map<string, vector<string>>> &m_token,
                   const unique_ptr<map<string, vector<string>>> &v_token,
@@ -224,16 +222,17 @@ int main(int argc, char *argv[]) {
   auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
   cout << setprecision(4) << "Initialization complete. Took "
        << time_taken.count() << " ms." << endl << endl;
-  cout << "Type 'q' to quit" << endl;
+  cout << "Type ':clear' to clear the console, "<< endl
+       << "     ':q' to quit." << endl;
 
   while (true) {
     cout << "> ";
     string input;
     getline(cin, input);
 
-    if (input == "q") break;
+    if (input == ":q") break;
 
-    string buf;
+    string buf{};
     stringstream ss_buf(input);
     vector<string> input_tokens;
     while (ss_buf >> buf) {
@@ -241,8 +240,18 @@ int main(int argc, char *argv[]) {
     }
 
     // do processing
+    if (input_tokens.size() == 1) {
+      if (input_tokens.at(0) == "exit") {
+        cout << "Type ':q' to quit" << endl;
+        continue;
+      } else if (input_tokens.at(0) == ":clear") {
+        if (system("cls")) {
+          system("clear");
+        }
+        continue;
+      }
+    }
     DoProcessing(&input_tokens, match_tokens, match_verbs, patterns);
-
     OutputTokens(input_tokens);
   }
   return 0;
