@@ -10,7 +10,7 @@ single_match * !l=8
 "what" to_be
 "and" demonstrative
 to_go *
-V preposition
-V demonstrative
-V pronoun
-V pronoun to_be
+to_* preposition
+to_* demonstrative
+to_* pronoun
+to_* pronoun to_be

@@ -22,6 +22,7 @@ using std::ifstream;
 using std::map;
 using std::setprecision;
 using std::size_t;
+using std::stoi;
 using std::string;
 using std::stringstream;
 using std::to_string;
@@ -32,7 +33,8 @@ const string kBuildString = to_string(MAJOR_VERSION) + "." + to_string(MINOR_VER
 
 void DoProcessing(vector<string> *i,
                   const unique_ptr<map<string, vector<string>>> &m_token,
-                  const unique_ptr<map<string, vector<string>>> &v_token) {
+                  const unique_ptr<map<string, vector<string>>> &v_token,
+                  const unique_ptr<vector<vector<string>>> &patterns) {
   for (size_t it = 0; it < i->size(); ++it) {
     // input vector size checks
     if (i->size() <= 1) {
@@ -43,11 +45,13 @@ void DoProcessing(vector<string> *i,
     if (i->at(it).back() == ',') {  // (.+),
       i->at(it).pop_back();
       continue;
-    } else if (i->at(it).back() == '.') {  // (.+)\.
-      if (i->at(it).at(i->at(it).size() - 2) != '.') {  // (.+)(?!(\.+)\.)
-        i->at(it).pop_back();
-        continue;
-      }
+    } else if ((i->at(it).back()) == '.' &&
+        (i->at(it).at(i->at(it).size() - 2)) != '.') {  // (.+)(?!(\.+)\.)
+      i->at(it).pop_back();
+      continue;
+    } else if (i->at(it).find("\'") != string::npos) {  // (.*\'.*) i.e. contractions
+      MergeTokens(i, it);
+      continue;
     }
 
     // string length checks
@@ -56,33 +60,56 @@ void DoProcessing(vector<string> *i,
     }
 
     // word pattern matches
-    if (i->at(it).find("\'") != string::npos) {  // (.*\'.*) i.e. contractions
-      MergeTokens(i, it);
-    } else if (StringIsMatch(i->at(it), m_token->at("pronoun")) ||  // (?pronoun) .+
-        StringIsMatch(i->at(it), m_token->at("preposition")) ||  // (?preposition) .+
-        StringIsMatch(i->at(it), m_token->at("article")) ||  // (?article) .+
-        StringIsMatch(i->at(it), m_token->at("single_match"))) {  // (?single_match) .+
-      MergeTokens(i, it, 8);
-    } else if (StringIsMatch(i->at(it), {"what"})) {  // what .+
-      if (SearchVerbTokens(i->at(it + 1), v_token, "to_be")) {  // what (?to_be)
-        MergeTokens(i, it);
+    vector<string> *match = nullptr;
+    string modifier{};
+    for (auto &&p : *patterns) {  // loop patterns
+      if (match != nullptr) {
+        break;
       }
-    } else if (StringIsMatch(i->at(it), {"and"})) {  // and .+
-      if (StringIsMatch(i->at(it + 1), m_token->at("demonstrative"))) {  // and (?demonstrative)
-        MergeTokens(i, it);
+      match = &p;
+      for (size_t iit = 0; iit < p.size(); ++iit) {  // loop pattern tokens
+        modifier = "";
+        string pattern{ReadTokenType(p.at(iit))};
+        if (pattern.at(0) == 'T') {
+          if (StringIsMatch(i->at(it + iit), m_token->at(pattern.substr(1, pattern.size())))) {
+            continue;
+          }
+        } else if (pattern.at(0) == 'L') {
+          if (StringIsMatch(i->at(it + iit), {pattern.substr(1, pattern.size())})) {
+            continue;
+          }
+        } else if (pattern.at(0) == 'W') {
+          continue;
+        } else if (pattern.at(0) == 'V') {
+          if (pattern.at(1) == 'W') {
+            if (SearchVerbTokens(i->at(it + iit), v_token)) {
+              continue;
+            }
+          } else {
+            if (SearchVerbTokens(i->at(it + iit), v_token, pattern.substr(1, pattern.size()))) {
+              continue;
+            }
+          }
+        } else if ((pattern.at(0) == 'M') && (pattern.find("VERSION") == string::npos)) {
+          modifier = pattern.substr(1, pattern.size());
+          continue;
+        }
+        match = nullptr;
+        break;
       }
-    } else if (SearchVerbTokens(i->at(it), v_token, "to_go")) {  // (?to_go) .+
-      MergeTokens(i, it);
-    } else if (SearchVerbTokens(i->at(it), v_token)) {  // (?verb_token) .+
-      if (StringIsMatch(i->at(it + 1), m_token->at("preposition"))) {  // (?verb_token) (?preposition)
-        MergeTokens(i, it);
-      } else if (StringIsMatch(i->at(it + 1), m_token->at("demonstrative"))) {  // (?verb_token) (?demonstrative)
-        MergeTokens(i, it);
-      } else if (StringIsMatch(i->at(it + 1), m_token->at("pronoun"))) {  // (?verb_token) (?pronoun)
-        MergeTokens(i, it);
-        if (SearchVerbTokens(i->at(it + 1), v_token, "to_be")) {  // (?verb_token) (?pronoun) (?to_be)
+    }
+
+    if (match != nullptr) {
+      for (size_t l = 1; l < match->size(); ++l)
+      if (modifier != "") {
+        ++l;
+        if (modifier.substr(0, 2) == "l=") {
+          MergeTokens(i, it, stoi(modifier.substr(2, modifier.size())));
+        } else {
           MergeTokens(i, it);
         }
+      } else {
+        MergeTokens(i, it);
       }
     }
   }
@@ -214,7 +241,7 @@ int main(int argc, char *argv[]) {
     }
 
     // do processing
-    DoProcessing(&input_tokens, match_tokens, match_verbs);
+    DoProcessing(&input_tokens, match_tokens, match_verbs, patterns);
 
     OutputTokens(input_tokens);
   }

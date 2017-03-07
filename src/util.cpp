@@ -88,3 +88,21 @@ bool SearchVerbTokens(const string &s, const unique_ptr<map<string, vector<strin
   }
   return false;
 }
+
+string ReadTokenType(const string s) {
+  if (s.front() == '\"' && s.back() == '\"') {
+    return ("L" + s.substr(1, s.size() - 2));
+  } else if (s.substr(0, 3) == "to_") {
+    if (s.at(3) == '*') {
+      return "VW";
+    } else {
+      return ("V" + s);
+    }
+  } else if (s.at(0) == '*') {
+    return "W";
+  } else if (s.at(0) == '!') {
+    return ("M" + s.substr(1, s.size()));
+  } else {
+    return ("T" + s);
+  }
+}

@@ -21,7 +21,7 @@ using std::vector;
 namespace {
 bool CheckTokens(string &s, const unique_ptr<map<string, vector<string>>> &m_token,
                  const unique_ptr<map<string, vector<string>>> &v_token) {
-  if ((s == "V") ||
+  if ((s == "to_*") ||
       (s.at(0) == '!') ||
       (s.at(0) == '*') ||
       (s.front() == '\"' && s.back() == '\"')) {
