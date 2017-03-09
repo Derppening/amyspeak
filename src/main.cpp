@@ -122,6 +122,12 @@ void OutputHelp(const char c[]) {
   cout << "      --version\t\toutput version information and exit" << endl;
 }
 
+void OutputVersionInfo() {
+  cout << "Amyspeak " << kBuildString << endl;
+  cout << "Copyright (C) 2017 Derppening" << endl;
+  cout << "Written by David Mak." << endl;
+}
+
 int main(int argc, char *argv[]) {
   // read input arguments
   vector<string> argvec{};
@@ -147,9 +153,7 @@ int main(int argc, char *argv[]) {
       OutputHelp(argv[0]);
       return 0;
     } else if (argvec.at(i) == "--version") {
-      cout << "Amyspeak " << kBuildString << endl;
-      cout << "Copyright (C) 2017 Derppening" << endl;
-      cout << "Written by David Mak." << endl;
+      OutputVersionInfo();
       return 0;
     }
   }
