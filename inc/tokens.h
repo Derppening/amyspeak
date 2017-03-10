@@ -1,0 +1,28 @@
+#ifndef AMYSPEAK_TOKENS_
+#define AMYSPEAK_TOKENS_
+
+#include <fstream>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+class Tokens {
+ public:
+  Tokens(std::ifstream &);
+
+  // accessors
+  auto GetTokens() const { return tokens_; }
+  auto GetVerbTokens() const { return verb_tokens_; }
+
+ private:
+  std::unique_ptr<std::vector<std::string>> ParseFile(std::ifstream &);
+  void ConstructTokens(const std::vector<std::string> &);
+  void ConstructVerbTokens(const std::vector<std::string> &);
+  void ReadTokensVersion(const std::string &);
+
+  std::shared_ptr<std::map<std::string, std::vector<std::string>>> tokens_;
+  std::shared_ptr<std::map<std::string, std::vector<std::string>>> verb_tokens_;
+};
+
+#endif  //AMYSPEAK_TOKENS_

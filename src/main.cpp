@@ -10,6 +10,8 @@
 #include <vector>
 
 #include "init.h"
+#include "patterns.h"
+#include "tokens.h"
 #include "util.h"
 #include "version.h"
 
@@ -21,6 +23,7 @@ using std::endl;
 using std::ifstream;
 using std::map;
 using std::setprecision;
+using std::shared_ptr;
 using std::size_t;
 using std::stoul;
 using std::string;
@@ -30,8 +33,8 @@ using std::unique_ptr;
 using std::vector;
 
 void DoProcessing(vector<string> *i,
-                  const unique_ptr<map<string, vector<string>>> &m_token,
-                  const unique_ptr<map<string, vector<string>>> &v_token,
+                  const shared_ptr<map<string, vector<string>>> &m_token,
+                  const shared_ptr<map<string, vector<string>>> &v_token,
                   const unique_ptr<vector<vector<string>>> &patterns) {
   for (size_t it = 0; it < i->size(); ++it) {
     // input vector size checks
@@ -113,8 +116,8 @@ void DoProcessing(vector<string> *i,
   }
 }
 
-void OutputHelp(const char c[]) {
-  cout << "Usage: " << c << " [OPTION]..." << endl;
+void OutputHelp(const string &s) {
+  cout << "Usage: " << s << " [OPTION]..." << endl;
   cout << "Converts a sentence to line-delimited phrases" << endl << endl;
   cout << "  -t, --token=[FILE]\tset token file path to [FILE]" << endl;
   cout << "  -p, --pattern=[FILE]\tset pattern file path to [FILE]" << endl;
@@ -128,44 +131,47 @@ void OutputVersionInfo() {
   cout << "Written by David Mak." << endl;
 }
 
-int main(int argc, char *argv[]) {
-  // read input arguments
-  vector<string> argvec{};
-  if (argc > 1) {
-    for (int i = 1; i < argc; i++) {
-      argvec.emplace_back(argv[i]);
+bool ReadCommandLineArgs(const vector<string> &args, string *token_filename, string *pattern_filename) {
+  for (size_t i = 1; i < args.size(); ++i) {
+    if (args.at(i) == "-t") {
+      *token_filename = args.at(++i);
+    } else if (args.at(i) == "-p") {
+      *pattern_filename = args.at(++i);
+    } else if (args.at(i).substr(0, 6) == "--token=") {
+      *token_filename = args.at(i).substr(6, args.at(i).size());
+    } else if (args.at(i).substr(0, 10) == "--pattern=") {
+      *pattern_filename = args.at(++i);
+    } else if (args.at(i) == "--help") {
+      OutputHelp(args.at(0));
+      return false;
+    } else if (args.at(i) == "--version") {
+      OutputVersionInfo();
+      return false;
     }
   }
+
+  if (token_filename->at(0) != '.' && token_filename->at(1) != '.') {
+    token_filename->insert(0, "./");
+  }
+  if (pattern_filename->at(0) != '.' && pattern_filename->at(1) != '.') {
+    pattern_filename->insert(0, "./");
+  }
+  cout << "Reading tokens from " << *token_filename << endl;
+  cout << "Reading patterns from " << *pattern_filename << endl;
+
+  return true;
+}
+
+int main(int argc, char *argv[]) {
+  // read input arguments
+  vector<string> argvec(argv, argv + argc);
 
   // analyze command line switches
   string token_src = "../tokens";
   string pattern_src = "../patterns";
-  for (size_t i = 0; i < argvec.size(); ++i) {
-    if (argvec.at(i) == "-t") {
-      token_src = argvec.at(++i);
-    } else if (argvec.at(i) == "-p") {
-      pattern_src = argvec.at(++i);
-    } else if (argvec.at(i).substr(0, 6) == "--token=") {
-      token_src = argvec.at(i).substr(6, argvec.at(i).size());
-    } else if (argvec.at(i).substr(0, 10) == "--pattern=") {
-      pattern_src = argvec.at(++i);
-    } else if (argvec.at(i) == "--help") {
-      OutputHelp(argv[0]);
-      return 0;
-    } else if (argvec.at(i) == "--version") {
-      OutputVersionInfo();
-      return 0;
-    }
+  if (!ReadCommandLineArgs(argvec, &token_src, &pattern_src)) {
+    return 0;
   }
-  if (token_src.at(0) != '.' && token_src.at(1) != '.') {
-    token_src.insert(0, "./");
-  }
-  if (pattern_src.at(0) != '.' && pattern_src.at(1) != '.') {
-    pattern_src.insert(0, "./");
-  }
-
-  cout << "Reading tokens from " << token_src << endl;
-  cout << "Reading patterns from " << pattern_src << endl;
 
   // see if the files exist
   unique_ptr<ifstream> token_file(new ifstream(token_src));
@@ -182,43 +188,17 @@ int main(int argc, char *argv[]) {
   auto time = steady_clock::now();
 
   // read and save normal tokens
-  cout << "Initializing tokens... ";
-  auto tokens = ParseTokens(*token_file);
-  auto token_pos = ParseTokenCategories(*tokens);
-  auto match_tokens = ConstructMatchingTokens(*tokens, *token_pos);
-  cout << "Done." << endl;
-
-  // read and save verb tokens
-  cout << "Initializing verb tokens... ";
-  unique_ptr<map<string, vector<string>>> match_verbs = nullptr;
-  for (auto &&i : *token_pos) {
-    if (i.second == "verb") {
-      match_verbs = ConstructVerbToken(*tokens, i.first);
-      break;
-    }
-  }
-  if (match_verbs == nullptr) {
-    cout << "Not found." << endl;
-  } else {
-    cout << "Done." << endl;
-  }
-  const string token_version_string = ReadTokensVersion(*tokens);
-
-  tokens.reset(nullptr);
+  Tokens tokens(*token_file);
   token_file.reset(nullptr);
-  token_pos.reset(nullptr);
 
   // read and save patterns
   cout << "Initializing patterns... ";
-  auto patterns = ParsePatterns(*pattern_file, match_tokens, match_verbs);
+  auto patterns = ParsePatterns(*pattern_file, tokens.GetTokens(), tokens.GetVerbTokens());
   const string pattern_version_string = ReadPatternsVersion(*patterns);
   cout << "Done." << endl;
 
   pattern_file.reset(nullptr);
 
-  if (token_version_string != "") {
-    cout << "Tokens library version: " << token_version_string << endl;
-  }
   if (pattern_version_string != "") {
     cout << "Patterns library version: " << pattern_version_string << endl;
   }
@@ -255,7 +235,7 @@ int main(int argc, char *argv[]) {
         continue;
       }
     }
-    DoProcessing(&input_tokens, match_tokens, match_verbs, patterns);
+    DoProcessing(&input_tokens, tokens.GetTokens(), tokens.GetVerbTokens(), patterns);
     OutputTokens(input_tokens);
   }
   return 0;
