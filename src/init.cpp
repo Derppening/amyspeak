@@ -77,6 +77,9 @@ unique_ptr<vector<string>> ParseTokens(ifstream &input_file) {
 
   string buffer_line;
   while (getline(input_file, buffer_line)) {  // read everything from the file
+    if (buffer_line.back() == '\r') {
+      buffer_line.pop_back();
+    }
     if (buffer_line.find("//") != string::npos) {  // read "//" as single-line comment
       continue;
     } else if (buffer_line == "") {  // do not read empty lines
@@ -94,6 +97,9 @@ unique_ptr<vector<pair<size_t, string>>> ParseTokenCategories(const vector<strin
 
   for (size_t i = 0; i < in.size(); ++i) {
     string buffer_line{in.at(i)};
+    if (buffer_line.back() == '\r') {
+      buffer_line.pop_back();
+    }
     if (buffer_line.find(":", buffer_line.size() - 1) != string::npos) {  // found a category!
       string category = buffer_line.substr(0, buffer_line.size() - 1);
       v.emplace_back(make_pair(i, category));
@@ -113,7 +119,7 @@ unique_ptr<map<string, vector<string>>> ConstructMatchingTokens(const vector<str
       continue;
     }
     m.emplace(make_pair(p.second, vector<string>{}));
-    for (size_t i = p.first + 1; tokens.at(i).find(":", tokens.at(i).size() - 1) == string::npos; ++i) {
+    for (size_t i = p.first + 1; tokens.at(i).find(":") == string::npos; ++i) {
       m.at(p.second).emplace_back(tokens.at(i));
       if (i + 1 >= tokens.size()) {
         break;
@@ -128,7 +134,7 @@ unique_ptr<map<string, vector<string>>> ConstructMatchingTokens(const vector<str
 unique_ptr<map<string, vector<string>>> ConstructVerbToken(const vector<string> &tokens, size_t start_pos) {
   map<string, vector<string>> m{};  // map of tokens
 
-  for (size_t i = start_pos + 1; tokens.at(i).find(":", tokens.at(i).size() - 1) == string::npos; ++i) {
+  for (size_t i = start_pos + 1; tokens.at(i).find(":") == string::npos; ++i) {
     string line_buffer{};
     stringstream ss_buf(tokens.at(i));
     vector<string> line_tokens{};
