@@ -1,5 +1,5 @@
-#ifndef AMYSPEAK_TOKENS_
-#define AMYSPEAK_TOKENS_
+#ifndef AMYSPEAK_TOKENS_H_
+#define AMYSPEAK_TOKENS_H_
 
 #include <fstream>
 #include <map>
@@ -25,4 +25,4 @@ class Tokens {
   std::shared_ptr<std::map<std::string, std::vector<std::string>>> verb_tokens_;
 };
 
-#endif  //AMYSPEAK_TOKENS_
+#endif  //AMYSPEAK_TOKENS_H_

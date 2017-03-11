@@ -1,5 +1,5 @@
-#ifndef AMYSPEAK_UTIL_
-#define AMYSPEAK_UTIL_
+#ifndef AMYSPEAK_UTIL_H_
+#define AMYSPEAK_UTIL_H_
 
 #include <map>
 #include <memory>
@@ -16,4 +16,4 @@ bool SearchVerbTokens(const std::string &s,
                       const std::string cat);
 std::string ReadTokenType(const std::string s);
 
-#endif  // AMYSPEAK_UTIL_
+#endif  // AMYSPEAK_UTIL_H_
