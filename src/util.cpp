@@ -17,17 +17,7 @@ using std::transform;
 using std::unique_ptr;
 using std::vector;
 
-void MergeTokens(vector<string> *v, size_t i, size_t check_length) {
-  if ((i + 1) >= v->size()) {
-    return;
-  }
-  if (CheckStringLength(v->at(i), check_length) || CheckStringLength(v->at(i + 1), check_length)) {
-    return;
-  }
-  v->at(i) += (" " + v->at(i + 1));
-  v->erase(cbegin(*v) + i + 1);
-}
-
+namespace {
 void TruncatePunctuation(string *s) {
   for (size_t i = s->size(); i-- > 0;) {
     switch (s->at(i)) {
@@ -40,6 +30,18 @@ void TruncatePunctuation(string *s) {
         break;
     }
   }
+}
+}  // namespace
+
+void MergeTokens(vector<string> *v, size_t i, size_t check_length) {
+  if ((i + 1) >= v->size()) {
+    return;
+  }
+  if (CheckStringLength(v->at(i), check_length) || CheckStringLength(v->at(i + 1), check_length)) {
+    return;
+  }
+  v->at(i) += (" " + v->at(i + 1));
+  v->erase(cbegin(*v) + i + 1);
 }
 
 bool StringIsMatch(string s, const vector<string> &v) {

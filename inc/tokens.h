@@ -10,10 +10,11 @@
 class Tokens {
  public:
   Tokens(std::ifstream &);
+  ~Tokens();
 
   // accessors
-  auto GetTokens() const { return tokens_; }
-  auto GetVerbTokens() const { return verb_tokens_; }
+  inline auto GetTokens() const { return tokens_; }
+  inline auto GetVerbTokens() const { return verb_tokens_; }
 
  private:
   std::unique_ptr<std::vector<std::string>> ParseFile(std::ifstream &);
