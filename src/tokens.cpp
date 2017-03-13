@@ -14,11 +14,15 @@ using std::make_shared;
 using std::make_unique;
 using std::map;
 using std::pair;
+using std::shared_ptr;
 using std::size_t;
 using std::string;
 using std::stringstream;
 using std::vector;
 using std::unique_ptr;
+
+shared_ptr<map<string, vector<string>>> Tokens::tokens_ = nullptr;
+shared_ptr<map<string, vector<string>>> Tokens::verb_tokens_ = nullptr;
 
 void Tokens::ReadTokensVersion(const string &l) {
   if (l.find("VERSION") != string::npos) {
@@ -28,7 +32,7 @@ void Tokens::ReadTokensVersion(const string &l) {
 }
 
 Tokens::Tokens(ifstream &file) {
-  // create the token maps
+  // create the maps of tokens
   tokens_ = make_shared<map<string, vector<string>>>();
   verb_tokens_ = make_shared<map<string, vector<string>>>();
 
@@ -97,7 +101,7 @@ void Tokens::ConstructTokens(const vector<string> &in) {
   }
 }
 
-void Tokens::ConstructVerbTokens(const std::vector<std::string> &in) {
+void Tokens::ConstructVerbTokens(const vector<string> &in) {
   size_t start_pos = 0;
   // determine starting position
   for (size_t i = 0; i < in.size(); ++i) {

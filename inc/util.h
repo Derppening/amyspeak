@@ -14,6 +14,6 @@ bool SearchVerbTokens(const std::string &s, const std::shared_ptr<std::map<std::
 bool SearchVerbTokens(const std::string &s,
                       const std::shared_ptr<std::map<std::string, std::vector<std::string>>> &m,
                       const std::string cat);
-std::string ReadTokenType(const std::string s);
+std::string ReadTokenType(const std::string &s);
 
 #endif  // AMYSPEAK_UTIL_H_

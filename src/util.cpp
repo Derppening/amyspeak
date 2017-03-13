@@ -92,7 +92,7 @@ bool SearchVerbTokens(const string &s, const shared_ptr<map<string, vector<strin
   return false;
 }
 
-string ReadTokenType(const string s) {
+string ReadTokenType(const string &s) {
   if (s.front() == '\"' && s.back() == '\"') {
     return ("L" + s.substr(1, s.size() - 2));
   } else if (s.substr(0, 3) == "to_") {

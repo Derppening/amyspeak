@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-#include "init.h"
 #include "patterns.h"
 #include "tokens.h"
 #include "util.h"
@@ -35,7 +34,7 @@ using std::vector;
 void DoProcessing(vector<string> *i,
                   const shared_ptr<map<string, vector<string>>> &m_token,
                   const shared_ptr<map<string, vector<string>>> &v_token,
-                  const unique_ptr<vector<vector<string>>> &patterns) {
+                  const shared_ptr<vector<vector<string>>> &patterns) {
   for (size_t it = 0; it < i->size(); ++it) {
     // input vector size checks
     if (i->size() <= 1) {
@@ -193,15 +192,10 @@ int main(int argc, char *argv[]) {
 
   // read and save patterns
   cout << "Initializing patterns... ";
-  auto patterns = ParsePatterns(*pattern_file, tokens.GetTokens(), tokens.GetVerbTokens());
-  const string pattern_version_string = ReadPatternsVersion(*patterns);
+  Patterns patterns(*pattern_file);
   cout << "Done." << endl;
 
   pattern_file.reset(nullptr);
-
-  if (pattern_version_string != "") {
-    cout << "Patterns library version: " << pattern_version_string << endl;
-  }
 
   auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
   cout << setprecision(4) << "Initialization complete. Took "
@@ -235,7 +229,7 @@ int main(int argc, char *argv[]) {
         continue;
       }
     }
-    DoProcessing(&input_tokens, tokens.GetTokens(), tokens.GetVerbTokens(), patterns);
+    DoProcessing(&input_tokens, tokens.GetTokens(), tokens.GetVerbTokens(), patterns.GetPatterns());
     OutputTokens(input_tokens);
   }
   return 0;
