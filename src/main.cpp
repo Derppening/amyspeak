@@ -35,7 +35,7 @@ void DoProcessing(vector<string> *i,
                   const shared_ptr<map<string, vector<string>>> &m_token,
                   const shared_ptr<map<string, vector<string>>> &v_token,
                   const shared_ptr<vector<vector<string>>> &patterns) {
-  for (size_t it = 0; it < i->size(); ++it) {
+  for (size_t it = 0; it < i->size(); ++it) {  // loop vector of string
     // input vector size checks
     if (i->size() <= 1) {
       break;
@@ -46,7 +46,7 @@ void DoProcessing(vector<string> *i,
       i->at(it).pop_back();
       continue;
     } else if ((i->at(it).back()) == '.' &&
-        (i->at(it).at(i->at(it).size() - 2)) != '.') {  // (.+)(?!(\.+)\.)
+        (i->at(it).at(i->at(it).size() - 2)) != '.') {  // (.+)(\.\.)
       i->at(it).pop_back();
       continue;
     } else if (i->at(it).find("\'") != string::npos) {  // (.*\'.*) i.e. contractions
@@ -69,7 +69,7 @@ void DoProcessing(vector<string> *i,
       match = &p;
       for (size_t iit = 0; iit < p.size(); ++iit) {  // loop pattern tokens
         modifier = "";
-        string pattern{ReadTokenType(p.at(iit))};
+        string pattern{Patterns::ReadTokenType(p.at(iit))};
         if (pattern.at(0) == 'T') {
           if (StringIsMatch(i->at(it + iit), m_token->at(pattern.substr(1, pattern.size())))) {
             continue;
@@ -82,11 +82,11 @@ void DoProcessing(vector<string> *i,
           continue;
         } else if (pattern.at(0) == 'V') {
           if (pattern.at(1) == 'W') {
-            if (SearchVerbTokens(i->at(it + iit), v_token)) {
+            if (Tokens::SearchVerbTokens(i->at(it + iit))) {
               continue;
             }
           } else {
-            if (SearchVerbTokens(i->at(it + iit), v_token, pattern.substr(1, pattern.size()))) {
+            if (Tokens::SearchVerbTokens(i->at(it + iit), pattern.substr(1, pattern.size()))) {
               continue;
             }
           }

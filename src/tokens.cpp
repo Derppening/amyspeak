@@ -133,3 +133,28 @@ void Tokens::ConstructVerbTokens(const vector<string> &in) {
     }
   }
 }
+
+bool Tokens::SearchVerbTokens(const string &s) {
+  for (auto &&m_e : *verb_tokens_) {
+    for (auto &&v_e : m_e.second) {
+      if (v_e == s) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool Tokens::SearchVerbTokens(const string &s, const string cat) {
+  try {
+    verb_tokens_->at(cat);
+  } catch (std::out_of_range) {
+    return false;
+  }
+  for (auto &&v_e : verb_tokens_->at(cat)) {
+    if (v_e == s) {
+      return true;
+    }
+  }
+  return false;
+}

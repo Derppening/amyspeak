@@ -16,6 +16,8 @@ class Patterns {
   // accessors
   inline std::shared_ptr<std::vector<std::vector<std::string>>> GetPatterns() const { return patterns_; }
 
+  static string ReadTokenType(const string &);
+
  private:
   bool CheckTokenValidity(const std::string &);
   void ConstructPatterns(const std::vector<std::string> &);

@@ -16,6 +16,9 @@ class Tokens {
   inline std::shared_ptr<std::map<std::string, std::vector<std::string>>> GetTokens() const { return tokens_; }
   inline std::shared_ptr<std::map<std::string, std::vector<std::string>>> GetVerbTokens() const { return verb_tokens_; }
 
+  static bool SearchVerbTokens(const std::string &s);
+  static bool SearchVerbTokens(const std::string &s, const std::string cat);
+
  private:
   std::unique_ptr<std::vector<std::string>> ParseFile(std::ifstream &);
   void ConstructTokens(const std::vector<std::string> &);
