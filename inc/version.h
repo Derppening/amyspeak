@@ -1,7 +1,8 @@
 // Copyright (c) 2017 David Mak. All rights reserved.
-// Licensed under GPLv3.
+// Licensed under MIT.
 //
 // Stores the major and minor version numbers.
+//
 
 #ifndef AMYSPEAK_VERSION_H_
 #define AMYSPEAK_VERSION_H_

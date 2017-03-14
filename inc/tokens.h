@@ -1,5 +1,5 @@
 // Copyright (c) 2017 David Mak. All rights reserved.
-// Licensed under GPLv3.
+// Licensed under MIT.
 //
 // File for the Tokens class.
 //

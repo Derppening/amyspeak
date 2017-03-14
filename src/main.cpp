@@ -1,5 +1,5 @@
 // Copyright (c) 2017 David Mak. All rights reserved.
-// Licensed under GPLv3.
+// Licensed under MIT.
 //
 // This file manages the program arguments, initializes the patterns and
 // tokens, and does basic processing for the main loop.

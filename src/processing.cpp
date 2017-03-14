@@ -1,5 +1,5 @@
 // Copyright (c) 2017 David Mak. All rights reserved.
-// Licensed under GPLv3.
+// Licensed under MIT.
 //
 // Checks the input vector for matching patterns, and merge the tokens (words)
 // if there are any matches.
