@@ -79,9 +79,9 @@ bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
     } else if (args.at(i) == "-p") {
       *pattern_filename = args.at(++i);
     } else if (args.at(i).substr(0, 8) == "--token=") {
-      *token_filename = args.at(i).substr(8, args.at(i).size());
+      *token_filename = args.at(i).substr(8);
     } else if (args.at(i).substr(0, 10) == "--pattern=") {
-      *pattern_filename = args.at(i).substr(10, args.at(i).size());
+      *pattern_filename = args.at(i).substr(10);
     } else if (args.at(i) == "--help") {
       OutputHelp(args.at(0));
       return false;

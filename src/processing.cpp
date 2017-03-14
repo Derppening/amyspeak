@@ -57,11 +57,11 @@ void DoProcessing(vector<string> *i) {
         modifier = "";
         string pattern{Patterns::ReadPatternType(p.at(iit))};
         if (pattern.at(0) == 'T') {
-          if (StringIsMatch(i->at(it + iit), Tokens::GetTokenType(pattern.substr(1, pattern.size())))) {
+          if (StringIsMatch(i->at(it + iit), Tokens::GetTokenType(pattern.substr(1)))) {
             continue;
           }
         } else if (pattern.at(0) == 'L') {
-          if (StringIsMatch(i->at(it + iit), {pattern.substr(1, pattern.size())})) {
+          if (StringIsMatch(i->at(it + iit), {pattern.substr(1)})) {
             continue;
           }
         } else if (pattern.at(0) == 'W') {
@@ -72,12 +72,12 @@ void DoProcessing(vector<string> *i) {
               continue;
             }
           } else {
-            if (Tokens::SearchVerbTokens(i->at(it + iit), pattern.substr(1, pattern.size()))) {
+            if (Tokens::SearchVerbTokens(i->at(it + iit), pattern.substr(1))) {
               continue;
             }
           }
         } else if ((pattern.at(0) == 'M') && (pattern.find("VERSION") == string::npos)) {
-          modifier = pattern.substr(1, pattern.size());
+          modifier = pattern.substr(1);
           continue;
         }
         match = nullptr;
@@ -90,7 +90,7 @@ void DoProcessing(vector<string> *i) {
         if (modifier != "") {
           ++l;
           if (modifier.substr(0, 2) == "l=") {
-            MergeTokens(i, it, stoul(modifier.substr(2, modifier.size())));
+            MergeTokens(i, it, stoul(modifier.substr(2)));
           } else {
             MergeTokens(i, it);
           }
@@ -110,6 +110,9 @@ bool ProcessCommand(string &s) {
     if (system("cls")) {
       system("clear");
     }
+    return true;
+  } else if (s.front() == ':') {
+    cout << "Unknown command: " << s.substr(1) << endl;
     return true;
   }
 

@@ -30,7 +30,7 @@ shared_ptr<vector<vector<string>>> Patterns::patterns_ = nullptr;
 
 void Patterns::ReadPatternsVersion(const string &l) {
   if (l.find("VERSION") != string::npos) {
-    string version_string = l.substr(l.find("=") + 1, l.size());
+    string version_string = l.substr(l.find("=") + 1);
     cout << "Patterns library version: " << version_string << endl;
   }
 }
@@ -104,7 +104,7 @@ string Patterns::ReadPatternType(const string &s) {
   } else if (s.at(0) == '*') {  // wildcard
     return "W";
   } else if (s.at(0) == '!') {  // modifier
-    return ("M" + s.substr(1, s.size()));
+    return ("M" + s.substr(1));
   } else {  // token
     return ("T" + s);
   }
