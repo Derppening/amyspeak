@@ -60,7 +60,7 @@ void OutputHelp(const string &s) {
 void OutputVersionInfo() {
   cout << "Amyspeak " << kBuildString << endl;
   cout << "Copyright (C) 2017 David Mak" << endl;
-  cout << "Licensed under GPLv3." << endl;
+  cout << "Licensed under MIT." << endl;
 }
 
 /**
