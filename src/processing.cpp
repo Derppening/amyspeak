@@ -25,6 +25,8 @@ void DoProcessing(vector<string> *i) {
     // input vector size checks
     if (i->size() <= 1) {
       break;
+    } else if (it + 1 >= i->size()) {
+      break;
     }
 
     // punctuation checks
