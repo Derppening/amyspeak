@@ -9,8 +9,8 @@
 
 #include <string>
 
-#define MAJOR_VERSION 1
-#define MINOR_VERSION 1
+#define MAJOR_VERSION 2
+#define MINOR_VERSION 0
 
 const std::string kBuildString = std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION);
 
