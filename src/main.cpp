@@ -105,6 +105,8 @@ bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
 }  // namespace
 
 int main(int argc, char *argv[]) {
+  // TODO: debug/verbose mode
+
   // read input arguments
   vector<string> argvec(argv, argv + argc);
 
@@ -157,23 +159,16 @@ int main(int argc, char *argv[]) {
       input_tokens.emplace_back(buf);
     }
 
-    // do processing
-    // TODO: split the ':'-leading inputs to a separate function
-    if (input_tokens.size() == 1) {
-      if (input_tokens.at(0) == "exit") {
-        cout << "Type ':q' to quit" << endl;
-        continue;
-      } else if (input_tokens.at(0) == ":clear") {
-        if (system("cls")) {
-          system("clear");
-        }
-        continue;
-      }
+    // assume that if we have one token, it is a command
+    if (input_tokens.size() == 1 &&
+        ProcessCommand(input_tokens.at(0))) {
+      continue;
     }
 
     DoProcessing(&input_tokens);
     OutputTokens(input_tokens);
   }
+  cout << "Exiting..." << endl << endl;
 
   return 0;
 }

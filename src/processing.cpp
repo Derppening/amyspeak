@@ -7,6 +7,7 @@
 
 #include "processing.h"
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -14,6 +15,8 @@
 #include "tokens.h"
 #include "util.h"
 
+using std::cout;
+using std::endl;
 using std::string;
 using std::vector;
 
@@ -96,4 +99,19 @@ void DoProcessing(vector<string> *i) {
         }
     }
   }
+}
+
+bool ProcessCommand(string &s) {
+  if (s.find("exit") != string::npos ||
+      s.find("quit") != string::npos) {
+    cout << "Type ':q' to quit" << endl << endl;
+    return true;
+  } else if (s == ":clear") {
+    if (system("cls")) {
+      system("clear");
+    }
+    return true;
+  }
+
+  return false;
 }
