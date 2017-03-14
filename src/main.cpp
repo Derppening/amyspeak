@@ -78,10 +78,10 @@ bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
       *token_filename = args.at(++i);
     } else if (args.at(i) == "-p") {
       *pattern_filename = args.at(++i);
-    } else if (args.at(i).substr(0, 6) == "--token=") {
-      *token_filename = args.at(i).substr(6, args.at(i).size());
+    } else if (args.at(i).substr(0, 8) == "--token=") {
+      *token_filename = args.at(i).substr(8, args.at(i).size());
     } else if (args.at(i).substr(0, 10) == "--pattern=") {
-      *pattern_filename = args.at(++i);
+      *pattern_filename = args.at(i).substr(10, args.at(i).size());
     } else if (args.at(i) == "--help") {
       OutputHelp(args.at(0));
       return false;
@@ -111,8 +111,8 @@ int main(int argc, char *argv[]) {
   vector<string> argvec(argv, argv + argc);
 
   // analyze command line switches
-  string token_src = "../tokens";
-  string pattern_src = "../patterns";
+  string token_src = "./tokens";
+  string pattern_src = "./patterns";
   if (!ReadCommandLineArgs(argvec, &token_src, &pattern_src)) {
     return 0;
   }
