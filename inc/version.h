@@ -11,7 +11,10 @@
 
 #define MAJOR_VERSION 2
 #define MINOR_VERSION 0
+#define PATCH_VERSION 2
 
-const std::string kBuildString = std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION);
+const std::string kBuildString = std::to_string(MAJOR_VERSION) + "." +
+    std::to_string(MINOR_VERSION) + "." +
+    std::to_string(PATCH_VERSION);
 
 #endif //AMYSPEAK_VERSION_H_
