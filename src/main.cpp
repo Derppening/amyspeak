@@ -1,3 +1,10 @@
+// Copyright (c) 2017 David Mak. All rights reserved.
+// Licensed under GPLv3.
+//
+// This file manages the program arguments, initializes the patterns and
+// tokens, and does basic processing for the main loop.
+//
+
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -10,6 +17,7 @@
 #include <vector>
 
 #include "patterns.h"
+#include "processing.h"
 #include "tokens.h"
 #include "util.h"
 #include "version.h"
@@ -31,90 +39,12 @@ using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
-void DoProcessing(vector<string> *i,
-                  const shared_ptr<map<string, vector<string>>> &m_token,
-                  const shared_ptr<map<string, vector<string>>> &v_token,
-                  const shared_ptr<vector<vector<string>>> &patterns) {
-  for (size_t it = 0; it < i->size(); ++it) {  // loop vector of string
-    // input vector size checks
-    if (i->size() <= 1) {
-      break;
-    }
-
-    // punctuation checks
-    if (i->at(it).back() == ',') {  // (.+),
-      i->at(it).pop_back();
-      continue;
-    } else if ((i->at(it).back()) == '.' &&
-        (i->at(it).at(i->at(it).size() - 2)) != '.') {  // (.+)(\.\.)
-      i->at(it).pop_back();
-      continue;
-    } else if (i->at(it).find("\'") != string::npos) {  // (.*\'.*) i.e. contractions
-      MergeTokens(i, it);
-      continue;
-    }
-
-    // string length checks
-    if (CheckStringLength(i->at(it), 6)) {  // don't process if word is longer than 6-char
-      continue;
-    }
-
-    // word pattern matches
-    vector<string> *match = nullptr;
-    string modifier{};
-    for (auto &&p : *patterns) {  // loop patterns
-      if (match != nullptr) {
-        break;
-      }
-      match = &p;
-      for (size_t iit = 0; iit < p.size(); ++iit) {  // loop pattern tokens
-        modifier = "";
-        string pattern{Patterns::ReadTokenType(p.at(iit))};
-        if (pattern.at(0) == 'T') {
-          if (StringIsMatch(i->at(it + iit), m_token->at(pattern.substr(1, pattern.size())))) {
-            continue;
-          }
-        } else if (pattern.at(0) == 'L') {
-          if (StringIsMatch(i->at(it + iit), {pattern.substr(1, pattern.size())})) {
-            continue;
-          }
-        } else if (pattern.at(0) == 'W') {
-          continue;
-        } else if (pattern.at(0) == 'V') {
-          if (pattern.at(1) == 'W') {
-            if (Tokens::SearchVerbTokens(i->at(it + iit))) {
-              continue;
-            }
-          } else {
-            if (Tokens::SearchVerbTokens(i->at(it + iit), pattern.substr(1, pattern.size()))) {
-              continue;
-            }
-          }
-        } else if ((pattern.at(0) == 'M') && (pattern.find("VERSION") == string::npos)) {
-          modifier = pattern.substr(1, pattern.size());
-          continue;
-        }
-        match = nullptr;
-        break;
-      }
-    }
-
-    if (match != nullptr) {
-      for (size_t l = 1; l < match->size(); ++l)
-      if (modifier != "") {
-        ++l;
-        if (modifier.substr(0, 2) == "l=") {
-          MergeTokens(i, it, stoul(modifier.substr(2, modifier.size())));
-        } else {
-          MergeTokens(i, it);
-        }
-      } else {
-        MergeTokens(i, it);
-      }
-    }
-  }
-}
-
+namespace {
+/**
+ * Outputs the help text to stdout.
+ *
+ * @param s Name of the program
+ */
 void OutputHelp(const string &s) {
   cout << "Usage: " << s << " [OPTION]..." << endl;
   cout << "Converts a sentence to line-delimited phrases" << endl << endl;
@@ -124,13 +54,25 @@ void OutputHelp(const string &s) {
   cout << "      --version\t\toutput version information and exit" << endl;
 }
 
+/**
+ * Outputs the version information to stdout.
+ */
 void OutputVersionInfo() {
   cout << "Amyspeak " << kBuildString << endl;
-  cout << "Copyright (C) 2017 Derppening" << endl;
-  cout << "Written by David Mak." << endl;
+  cout << "Copyright (C) 2017 David Mak" << endl;
+  cout << "Licensed under GPLv3." << endl;
 }
 
-bool ReadCommandLineArgs(const vector<string> &args, string *token_filename, string *pattern_filename) {
+/**
+ * Processes the command line arguments.
+ *
+ * @param args Vector of command-line arguments
+ * @param token_filename Filename storing tokens
+ * @param pattern_filename Filename storing patterns
+ * @return False if program should terminate
+ */
+bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
+                         string *pattern_filename) {
   for (size_t i = 1; i < args.size(); ++i) {
     if (args.at(i) == "-t") {
       *token_filename = args.at(++i);
@@ -160,6 +102,7 @@ bool ReadCommandLineArgs(const vector<string> &args, string *token_filename, str
 
   return true;
 }
+}  // namespace
 
 int main(int argc, char *argv[]) {
   // read input arguments
@@ -191,16 +134,13 @@ int main(int argc, char *argv[]) {
   token_file.reset(nullptr);
 
   // read and save patterns
-  cout << "Initializing patterns... ";
   Patterns patterns(*pattern_file);
-  cout << "Done." << endl;
-
   pattern_file.reset(nullptr);
 
   auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
   cout << setprecision(4) << "Initialization complete. Took "
        << time_taken.count() << " ms." << endl << endl;
-  cout << "Type ':clear' to clear the console, "<< endl
+  cout << "Type ':clear' to clear the console, " << endl
        << "     ':q' to quit." << endl;
 
   while (true) {
@@ -218,6 +158,7 @@ int main(int argc, char *argv[]) {
     }
 
     // do processing
+    // TODO: split the ':'-leading inputs to a separate function
     if (input_tokens.size() == 1) {
       if (input_tokens.at(0) == "exit") {
         cout << "Type ':q' to quit" << endl;
@@ -229,8 +170,10 @@ int main(int argc, char *argv[]) {
         continue;
       }
     }
-    DoProcessing(&input_tokens, tokens.GetTokens(), tokens.GetVerbTokens(), patterns.GetPatterns());
+
+    DoProcessing(&input_tokens);
     OutputTokens(input_tokens);
   }
+
   return 0;
 }

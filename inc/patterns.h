@@ -1,3 +1,12 @@
+// Copyright (c) 2017 David Mak. All rights reserved.
+// Licensed under GPLv3.
+//
+// File for the Patterns class.
+//
+// Patterns class houses the pointer to the vector of patterns,
+// initializer, and pattern-related functions.
+//
+
 #ifndef AMYSPEAK_PATTERNS_H_
 #define AMYSPEAK_PATTERNS_H_
 
@@ -13,15 +22,38 @@ class Patterns {
   Patterns(std::ifstream &);
   ~Patterns();
 
-  // accessors
-  inline std::shared_ptr<std::vector<std::vector<std::string>>> GetPatterns() const { return patterns_; }
+  /**
+   * @return Pointer to the vector of patterns
+   */
+   // TODO: Remove this function for better encapsulation
+  static std::shared_ptr<std::vector<std::vector<std::string>>> GetPatterns() {
+    return patterns_;
+  }
 
-  static string ReadTokenType(const string &);
+  /**
+   * Reads the type of pattern, and convert to single-char types.
+   *
+   * @return String of pattern with converted types.
+   */
+  static std::string ReadPatternType(const std::string &);
 
  private:
+  /**
+   * Checks whether a token in the pattern matches any record in tokens_ or
+   * verb_tokens_.
+   *
+   * @return True if the token is valid
+   */
   bool CheckTokenValidity(const std::string &);
+
+  /**
+   * Reads all the lines in the pattern file into the patterns vector.
+   */
   void ConstructPatterns(const std::vector<std::string> &);
-  std::unique_ptr<std::vector<std::string>> ParseFile(std::ifstream &file);
+
+  /**
+   * Read and outputs the version of the pattern file if available.
+   */
   void ReadPatternsVersion(const std::string &);
 
   static std::shared_ptr<std::vector<std::vector<std::string>>> patterns_;

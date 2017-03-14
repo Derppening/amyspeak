@@ -1,3 +1,9 @@
+// Copyright (c) 2017 David Mak. All rights reserved.
+// Licensed under GPLv3.
+//
+// Implementations for member functions of the Tokens class.
+//
+
 #include "tokens.h"
 
 #include <fstream>
@@ -6,6 +12,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "util.h"
 
 using std::cout;
 using std::endl;
@@ -60,27 +68,6 @@ Tokens::Tokens(ifstream &file) {
 Tokens::~Tokens() {
   tokens_.reset();
   verb_tokens_.reset();
-}
-
-unique_ptr<vector<string>> Tokens::ParseFile(ifstream &file) {
-  vector<string> v{};  // vector of tokens
-
-  string buffer_line;
-  while (getline(file, buffer_line)) {  // read everything from the file
-    if (buffer_line.back() == '\r') {
-      buffer_line.pop_back();
-    }
-    if (buffer_line.find("//") != string::npos) {  // read "//" as single-line comment
-      continue;
-    } else if (buffer_line == "") {  // do not read empty lines
-      continue;
-    }
-    v.emplace_back(buffer_line);
-  }
-
-  // write resulting vector into smart pointer
-  auto ptr = make_unique<vector<string>>(v);
-  return ptr;
 }
 
 void Tokens::ConstructTokens(const vector<string> &in) {
@@ -157,4 +144,8 @@ bool Tokens::SearchVerbTokens(const string &s, const string cat) {
     }
   }
   return false;
+}
+
+vector<string> & Tokens::GetTokenType(const string &s) {
+  return tokens_->at(s);
 }

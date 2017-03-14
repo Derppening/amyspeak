@@ -1,23 +1,33 @@
+// Copyright (c) 2017 David Mak. All rights reserved.
+// Licensed under GPLv3.
+//
+// Utilities to modularize the application.
+//
+
 #include "util.h"
 
 #include <algorithm>
 #include <iostream>
-#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 using std::cout;
 using std::endl;
-using std::map;
+using std::ifstream;
+using std::make_unique;
 using std::size_t;
-using std::shared_ptr;
 using std::string;
 using std::transform;
 using std::unique_ptr;
 using std::vector;
 
 namespace {
+/**
+ * Removes punctuation from a string
+ *
+ * @param s String
+ */
 void TruncatePunctuation(string *s) {
   for (size_t i = s->size(); i-- > 0;) {
     switch (s->at(i)) {
@@ -37,7 +47,8 @@ void MergeTokens(vector<string> *v, size_t i, size_t check_length) {
   if ((i + 1) >= v->size()) {
     return;
   }
-  if (CheckStringLength(v->at(i), check_length) || CheckStringLength(v->at(i + 1), check_length)) {
+  if (CheckStringLength(v->at(i), check_length) ||
+      CheckStringLength(v->at(i + 1), check_length)) {
     return;
   }
   v->at(i) += (" " + v->at(i + 1));
@@ -65,4 +76,25 @@ void OutputTokens(const vector<string> &v) {
 
 bool CheckStringLength(const string &s, const size_t size) {
   return s.size() > size;
+}
+
+unique_ptr<vector<string>> ParseFile(ifstream &file) {
+  vector<string> v{};  // vector of tokens
+
+  string buffer_line;
+  while (getline(file, buffer_line)) {  // read everything from the file
+    if (buffer_line.back() == '\r') {
+      buffer_line.pop_back();
+    }
+    if (buffer_line.find("//") != string::npos) {  // read "//" as single-line comment
+      continue;
+    } else if (buffer_line == "") {  // do not read empty lines
+      continue;
+    }
+    v.emplace_back(buffer_line);
+  }
+
+  // write resulting vector into smart pointer
+  auto ptr = make_unique<vector<string>>(v);
+  return ptr;
 }

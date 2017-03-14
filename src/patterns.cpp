@@ -1,3 +1,9 @@
+// Copyright (c) 2017 David Mak. All rights reserved.
+// Licensed under GPLv3.
+//
+// Implementations for member functions of the Patterns class.
+//
+
 #include "patterns.h"
 
 #include <fstream>
@@ -8,6 +14,7 @@
 #include <vector>
 
 #include "tokens.h"
+#include "util.h"
 
 using std::cout;
 using std::endl;
@@ -72,27 +79,6 @@ Patterns::~Patterns() {
   patterns_.reset();
 }
 
-unique_ptr<vector<string>> Patterns::ParseFile(ifstream &file) {
-  vector<string> v{};  // vector of tokens
-
-  string buffer_line;
-  while (getline(file, buffer_line)) {  // read everything from the file
-    if (buffer_line.back() == '\r') {
-      buffer_line.pop_back();
-    }
-    if (buffer_line.find("//") != string::npos) {  // read "//" as single-line comment
-      continue;
-    } else if (buffer_line == "") {  // do not read empty lines
-      continue;
-    }
-    v.emplace_back(buffer_line);
-  }
-
-  // write resulting vector into smart pointer
-  auto ptr = make_unique<vector<string>>(v);
-  return ptr;
-}
-
 void Patterns::ConstructPatterns(const vector<string> &in) {
   for (size_t i = 0; i < in.size(); ++i) {
     patterns_->emplace_back(vector<string>{});
@@ -106,20 +92,20 @@ void Patterns::ConstructPatterns(const vector<string> &in) {
   }
 }
 
-string Patterns::ReadTokenType(const string &s) {
-  if (s.front() == '\"' && s.back() == '\"') {
+string Patterns::ReadPatternType(const string &s) {
+  if (s.front() == '\"' && s.back() == '\"') {  // literals
     return ("L" + s.substr(1, s.size() - 2));
-  } else if (s.substr(0, 3) == "to_") {
-    if (s.at(3) == '*') {
+  } else if (s.substr(0, 3) == "to_") {  // verbs
+    if (s.at(3) == '*') {  // verb wildcard
       return "VW";
     } else {
       return ("V" + s);
     }
-  } else if (s.at(0) == '*') {
+  } else if (s.at(0) == '*') {  // wildcard
     return "W";
-  } else if (s.at(0) == '!') {
+  } else if (s.at(0) == '!') {  // modifier
     return ("M" + s.substr(1, s.size()));
-  } else {
+  } else {  // token
     return ("T" + s);
   }
 }
