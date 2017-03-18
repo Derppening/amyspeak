@@ -30,7 +30,7 @@ namespace {
  *
  * @param s String
  */
-void TruncatePunctuation(string *s) {
+void TruncatePunctuation(string* s) {
   for (size_t i = s->size(); i-- > 0;) {
     switch (s->at(i)) {
       case '!':
@@ -45,7 +45,7 @@ void TruncatePunctuation(string *s) {
 }
 }  // namespace
 
-void MergeTokens(vector<string> *v, size_t i, size_t check_length) {
+void MergeTokens(vector<string>* v, size_t i, size_t check_length) {
   if ((i + 1) >= v->size()) {
     return;
   }
@@ -59,10 +59,10 @@ void MergeTokens(vector<string> *v, size_t i, size_t check_length) {
   v->erase(cbegin(*v) + i + 1);
 }
 
-bool StringIsMatch(string s, const vector<string> &v) {
+bool StringIsMatch(string s, const vector<string>& v) {
   TruncatePunctuation(&s);
   transform(s.begin(), s.end(), s.begin(), ::tolower);
-  for (string s_t : v) {
+  for (const string& s_t : v) {
     if (s_t == s) {
       return true;
     }
@@ -70,19 +70,19 @@ bool StringIsMatch(string s, const vector<string> &v) {
   return false;
 }
 
-void OutputTokens(const vector<string> &v) {
+void OutputTokens(const vector<string>& v) {
   string tokens{};
-  for (string s : v) {
+  for (const string& s : v) {
     tokens += (s + "\n");
   }
   cout << tokens << endl;
 }
 
-bool CheckStringLength(const string &s, const size_t size) {
+bool CheckStringLength(const string& s, const size_t size) {
   return s.size() > size;
 }
 
-unique_ptr<vector<string>> ParseFile(ifstream &file) {
+unique_ptr<vector<string>> ParseFile(ifstream& file) {
   vector<string> v{};  // vector of tokens
 
   string buffer_line;

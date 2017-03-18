@@ -29,14 +29,14 @@ using std::vector;
 
 shared_ptr<vector<vector<string>>> Patterns::patterns_ = nullptr;
 
-void Patterns::ReadPatternsVersion(const string &l) {
+void Patterns::ReadPatternsVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
     string version_string = l.substr(l.find("=") + 1);
     cout << "Patterns library version: " << version_string << endl;
   }
 }
 
-bool Patterns::CheckTokenValidity(const string &s) {
+bool Patterns::CheckTokenValidity(const string& s) {
   if ((s == "to_*") ||
       (s.at(0) == '!') ||
       (s.at(0) == '*') ||
@@ -44,13 +44,13 @@ bool Patterns::CheckTokenValidity(const string &s) {
     return true;
   }
   if (s.size() > 3 && s.substr(0, 3) == "to_") {
-    for (auto &&token : *(Tokens::verb_tokens_)) {
+    for (auto&& token : *(Tokens::verb_tokens_)) {
       if (s == token.first) {
         return true;
       }
     }
   } else {
-    for (auto &&token : *(Tokens::tokens_)) {
+    for (auto&& token : *(Tokens::tokens_)) {
       if (s == token.first) {
         return true;
       }
@@ -60,7 +60,7 @@ bool Patterns::CheckTokenValidity(const string &s) {
   return false;
 }
 
-Patterns::Patterns(ifstream &file) {
+Patterns::Patterns(ifstream& file) {
   Log::OutputDebug("Patterns::Patterns()");
 
   // create the vector of patterns
@@ -83,7 +83,7 @@ Patterns::~Patterns() {
   patterns_.reset();
 }
 
-void Patterns::ConstructPatterns(const vector<string> &in) {
+void Patterns::ConstructPatterns(const vector<string>& in) {
   for (size_t i = 0; i < in.size(); ++i) {
     patterns_->emplace_back(vector<string>{});
     string buffer_token{};
@@ -96,7 +96,7 @@ void Patterns::ConstructPatterns(const vector<string> &in) {
   }
 }
 
-string Patterns::ReadPatternType(const string &s) {
+string Patterns::ReadPatternType(const string& s) {
   if (s.front() == '\"' && s.back() == '\"') {  // literals
     return ("L" + s.substr(1, s.size() - 2));
   } else if (s.substr(0, 3) == "to_") {  // verbs

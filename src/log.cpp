@@ -17,11 +17,11 @@ using std::vector;
 
 bool Log::debug_mode_ = false;
 
-void Log::OutputMessage(const string &s) {
+void Log::OutputMessage(const string& s) {
   cout << s << endl;
 }
 
-void Log::OutputDebug(const string &s) {
+void Log::OutputDebug(const string& s) {
   if (debug_mode_) {
     OutputMessage("DEBUG: " + s);
   }

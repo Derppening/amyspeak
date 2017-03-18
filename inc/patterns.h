@@ -19,7 +19,7 @@
 
 class Patterns {
  public:
-  Patterns(std::ifstream &);
+  Patterns(std::ifstream&);
   ~Patterns();
 
   /**
@@ -35,7 +35,7 @@ class Patterns {
    *
    * @return String of pattern with converted types.
    */
-  static std::string ReadPatternType(const std::string &);
+  static std::string ReadPatternType(const std::string&);
 
  private:
   /**
@@ -44,17 +44,17 @@ class Patterns {
    *
    * @return True if the token is valid
    */
-  bool CheckTokenValidity(const std::string &);
+  bool CheckTokenValidity(const std::string&);
 
   /**
    * Reads all the lines in the pattern file into the patterns vector.
    */
-  void ConstructPatterns(const std::vector<std::string> &);
+  void ConstructPatterns(const std::vector<std::string>&);
 
   /**
    * Read and outputs the version of the pattern file if available.
    */
-  void ReadPatternsVersion(const std::string &);
+  void ReadPatternsVersion(const std::string&);
 
   static std::shared_ptr<std::vector<std::vector<std::string>>> patterns_;
 };

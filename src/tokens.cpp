@@ -33,14 +33,14 @@ using std::unique_ptr;
 shared_ptr<map<string, vector<string>>> Tokens::tokens_ = nullptr;
 shared_ptr<map<string, vector<string>>> Tokens::verb_tokens_ = nullptr;
 
-void Tokens::ReadTokensVersion(const string &l) {
+void Tokens::ReadTokensVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
     string version_string = l.substr(l.find("=") + 1, l.size());
     cout << "Tokens library version: " << version_string << endl;
   }
 }
 
-Tokens::Tokens(ifstream &file) {
+Tokens::Tokens(ifstream& file) {
   Log::OutputDebug("Tokens::Tokens()");
 
   // create the maps of tokens
@@ -74,7 +74,7 @@ Tokens::~Tokens() {
   verb_tokens_.reset();
 }
 
-void Tokens::ConstructTokens(const vector<string> &in) {
+void Tokens::ConstructTokens(const vector<string>& in) {
   string category{""};
   for (auto l : in) {  // read all lines from vector
     if (l.back() == '\r') {
@@ -92,7 +92,7 @@ void Tokens::ConstructTokens(const vector<string> &in) {
   }
 }
 
-void Tokens::ConstructVerbTokens(const vector<string> &in) {
+void Tokens::ConstructVerbTokens(const vector<string>& in) {
   size_t start_pos = 0;
   // determine starting position
   for (size_t i = 0; i < in.size(); ++i) {
@@ -125,9 +125,9 @@ void Tokens::ConstructVerbTokens(const vector<string> &in) {
   }
 }
 
-bool Tokens::SearchVerbTokens(const string &s) {
-  for (auto &&m_e : *verb_tokens_) {
-    for (auto &&v_e : m_e.second) {
+bool Tokens::SearchVerbTokens(const string& s) {
+  for (auto&& m_e : *verb_tokens_) {
+    for (auto&& v_e : m_e.second) {
       if (v_e == s) {
         return true;
       }
@@ -136,13 +136,13 @@ bool Tokens::SearchVerbTokens(const string &s) {
   return false;
 }
 
-bool Tokens::SearchVerbTokens(const string &s, const string cat) {
+bool Tokens::SearchVerbTokens(const string& s, const string& cat) {
   try {
     verb_tokens_->at(cat);
   } catch (std::out_of_range) {
     return false;
   }
-  for (auto &&v_e : verb_tokens_->at(cat)) {
+  for (auto&& v_e : verb_tokens_->at(cat)) {
     if (v_e == s) {
       return true;
     }
@@ -150,6 +150,6 @@ bool Tokens::SearchVerbTokens(const string &s, const string cat) {
   return false;
 }
 
-vector<string> & Tokens::GetTokenType(const string &s) {
+vector<string>& Tokens::GetTokenType(const string& s) {
   return tokens_->at(s);
 }

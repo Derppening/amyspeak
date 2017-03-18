@@ -15,7 +15,7 @@
  *
  * @param i Vector of tokens
  */
-void DoProcessing(std::vector<std::string> *i);
+void DoProcessing(std::vector<std::string>* i);
 
 /**
  * Reads the only token and process it.
@@ -23,6 +23,6 @@ void DoProcessing(std::vector<std::string> *i);
  * @param s String of command
  * @return True if we are skipping the processing
  */
-bool ProcessCommand(std::string &s);
+bool ProcessCommand(std::string& s);
 
 #endif //AMYSPEAK_PROCESSING_H_

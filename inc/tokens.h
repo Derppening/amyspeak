@@ -18,7 +18,7 @@
 
 class Tokens {
  public:
-  Tokens(std::ifstream &);
+  Tokens(std::ifstream&);
   ~Tokens();
 
   /**
@@ -27,7 +27,7 @@ class Tokens {
    * @param s Token Type
    * @return Vector of strings with given token type
    */
-  static std::vector<std::string> & GetTokenType(const std::string &s);
+  static std::vector<std::string>& GetTokenType(const std::string& s);
 
   /**
    * Searches a string in all verb tokens.
@@ -35,7 +35,7 @@ class Tokens {
    * @param s String
    * @return True if string is found
    */
-  static bool SearchVerbTokens(const std::string &s);
+  static bool SearchVerbTokens(const std::string& s);
   /**
    * Searches a string in a given verb token.
    *
@@ -43,25 +43,25 @@ class Tokens {
    * @param cat Category of verb token.
    * @return True if string is found
    */
-  static bool SearchVerbTokens(const std::string &s, const std::string cat);
+  static bool SearchVerbTokens(const std::string& s, const std::string& cat);
 
  private:
   /**
    * Reads all the lines in the tokens file, and put all tokens into the
    * tokens vector.
    */
-  void ConstructTokens(const std::vector<std::string> &);
+  void ConstructTokens(const std::vector<std::string>&);
 
   /**
    * Reads all the lines in the tokens file, and put all verb tokens into the
    * verb tokens vector.
    */
-  void ConstructVerbTokens(const std::vector<std::string> &);
+  void ConstructVerbTokens(const std::vector<std::string>&);
 
   /**
    * Read and outputs the version of the token file if available.
    */
-  void ReadTokensVersion(const std::string &);
+  void ReadTokensVersion(const std::string&);
 
   static std::shared_ptr<std::map<std::string, std::vector<std::string>>> tokens_;
   static std::shared_ptr<std::map<std::string, std::vector<std::string>>> verb_tokens_;

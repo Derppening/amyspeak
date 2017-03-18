@@ -46,7 +46,7 @@ namespace {
  *
  * @param s Name of the program
  */
-void OutputHelp(const string &s) {
+void OutputHelp(const string& s) {
   cout << "Usage: " << s << " [OPTION]..." << endl;
   cout << "Converts a sentence to line-delimited phrases" << endl << endl;
   cout << "  -t, --token=[FILE]\tset token file path to [FILE]" << endl;
@@ -72,8 +72,8 @@ void OutputVersionInfo() {
  * @param pattern_filename Filename storing patterns
  * @return False if program should terminate
  */
-bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
-                         string *pattern_filename) {
+bool ReadCommandLineArgs(const vector<string>& args, string* token_filename,
+                         string* pattern_filename) {
   for (size_t i = 1; i < args.size(); ++i) {
     if (args.at(i) == "-t") {
       *token_filename = args.at(++i);
@@ -108,7 +108,7 @@ bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
 }
 }  // namespace
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   // read input arguments
   vector<string> argvec(argv, argv + argc);
 

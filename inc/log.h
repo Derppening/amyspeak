@@ -1,8 +1,7 @@
 // Copyright (c) 2017 David Mak. All rights reserved.
 // Licensed under MIT.
 //
-// This file manages the program arguments, initializes the patterns and
-// tokens, and does basic processing for the main loop.
+// Log class houses the framework for different levels of output messages.
 //
 
 #ifndef AMYSPEAK_LOG_H_
@@ -13,8 +12,8 @@
 
 class Log {
  public:
-  static void OutputDebug(const std::string &s);
-  static void OutputMessage(const std::string &s);
+  static void OutputDebug(const std::string& s);
+  static void OutputMessage(const std::string& s);
 
   static bool debug_mode_;
 };

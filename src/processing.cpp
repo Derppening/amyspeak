@@ -22,7 +22,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-void DoProcessing(vector<string> *i) {
+void DoProcessing(vector<string>* i) {
   for (size_t it = 0; it < i->size(); ++it) {  // loop vector of string
     Log::OutputDebug("Token " + to_string(it) + ": " + i->at(it));
 
@@ -54,7 +54,7 @@ void DoProcessing(vector<string> *i) {
     // word pattern matches
     vector<string> *match = nullptr;
     string modifier{};
-    for (auto &&p : *Patterns::GetPatterns()) {  // loop patterns
+    for (auto&& p : *Patterns::GetPatterns()) {  // loop patterns
       if (match != nullptr) {
         break;
       }
@@ -107,7 +107,7 @@ void DoProcessing(vector<string> *i) {
   }
 }
 
-bool ProcessCommand(string &s) {
+bool ProcessCommand(string& s) {
   Log::OutputDebug("ProcessCommand(\"" + s + "\")");
 
   if (s.find("exit") != string::npos ||
