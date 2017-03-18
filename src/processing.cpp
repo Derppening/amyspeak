@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "log.h"
 #include "patterns.h"
 #include "tokens.h"
 #include "util.h"
@@ -18,10 +19,13 @@
 using std::cout;
 using std::endl;
 using std::string;
+using std::to_string;
 using std::vector;
 
 void DoProcessing(vector<string> *i) {
   for (size_t it = 0; it < i->size(); ++it) {  // loop vector of string
+    Log::OutputDebug("Token " + to_string(it) + ": " + i->at(it));
+
     // input vector size checks
     if (i->size() <= 1) {
       break;
@@ -104,6 +108,8 @@ void DoProcessing(vector<string> *i) {
 }
 
 bool ProcessCommand(string &s) {
+  Log::OutputDebug("ProcessCommand(\"" + s + "\")");
+
   if (s.find("exit") != string::npos ||
       s.find("quit") != string::npos) {
     cout << "Type ':q' to quit" << endl << endl;

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "log.h"
 #include "tokens.h"
 #include "util.h"
 
@@ -60,6 +61,8 @@ bool Patterns::CheckTokenValidity(const string &s) {
 }
 
 Patterns::Patterns(ifstream &file) {
+  Log::OutputDebug("Patterns::Patterns()");
+
   // create the vector of patterns
   patterns_ = make_unique<vector<vector<string>>>();
 
@@ -76,6 +79,7 @@ Patterns::Patterns(ifstream &file) {
 }
 
 Patterns::~Patterns() {
+  Log::OutputDebug("Patterns::~Patterns()");
   patterns_.reset();
 }
 

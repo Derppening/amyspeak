@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "log.h"
 #include "patterns.h"
 #include "processing.h"
 #include "tokens.h"
@@ -82,6 +83,9 @@ bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
       *token_filename = args.at(i).substr(8);
     } else if (args.at(i).substr(0, 10) == "--pattern=") {
       *pattern_filename = args.at(i).substr(10);
+    } else if (args.at(i) == "-d" || args.at(i) == "--debug") {
+      Log::OutputMessage("Debug Mode Enabled");
+      Log::debug_mode_ = true;
     } else if (args.at(i) == "--help") {
       OutputHelp(args.at(0));
       return false;
@@ -105,8 +109,6 @@ bool ReadCommandLineArgs(const vector<string> &args, string *token_filename,
 }  // namespace
 
 int main(int argc, char *argv[]) {
-  // TODO: debug/verbose mode
-
   // read input arguments
   vector<string> argvec(argv, argv + argc);
 
@@ -132,11 +134,11 @@ int main(int argc, char *argv[]) {
   auto time = steady_clock::now();
 
   // read and save normal tokens
-  Tokens tokens(*token_file);
+  static Tokens tokens(*token_file);
   token_file.reset(nullptr);
 
   // read and save patterns
-  Patterns patterns(*pattern_file);
+  static Patterns patterns(*pattern_file);
   pattern_file.reset(nullptr);
 
   auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
@@ -168,7 +170,7 @@ int main(int argc, char *argv[]) {
     DoProcessing(&input_tokens);
     OutputTokens(input_tokens);
   }
-  cout << "Exiting..." << endl << endl;
+  cout << "Exiting..." << endl;
 
   return 0;
 }

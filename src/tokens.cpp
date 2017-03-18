@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "log.h"
 #include "util.h"
 
 using std::cout;
@@ -40,6 +41,8 @@ void Tokens::ReadTokensVersion(const string &l) {
 }
 
 Tokens::Tokens(ifstream &file) {
+  Log::OutputDebug("Tokens::Tokens()");
+
   // create the maps of tokens
   tokens_ = make_shared<map<string, vector<string>>>();
   verb_tokens_ = make_shared<map<string, vector<string>>>();
@@ -66,6 +69,7 @@ Tokens::Tokens(ifstream &file) {
 }
 
 Tokens::~Tokens() {
+  Log::OutputDebug("Tokens::~Tokens()");
   tokens_.reset();
   verb_tokens_.reset();
 }

@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+#include "log.h"
+
 using std::cout;
 using std::endl;
 using std::ifstream;
@@ -49,8 +51,10 @@ void MergeTokens(vector<string> *v, size_t i, size_t check_length) {
   }
   if (CheckStringLength(v->at(i), check_length) ||
       CheckStringLength(v->at(i + 1), check_length)) {
+    Log::OutputDebug("Merge \"" + v->at(i) + "\" \"" + v->at(i + 1) + "\": Skipped");
     return;
   }
+  Log::OutputDebug("Merge \"" + v->at(i) + "\" \"" + v->at(i + 1) + "\"");
   v->at(i) += (" " + v->at(i + 1));
   v->erase(cbegin(*v) + i + 1);
 }
