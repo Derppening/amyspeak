@@ -120,7 +120,7 @@ bool ProcessCommand(string& s) {
     }
     return true;
   } else if (s.front() == ':') {
-    cout << "Unknown command: " << s.substr(1) << endl;
+    Log::OutputMessage("Unknown command: " + s.substr(1));
     return true;
   }
 

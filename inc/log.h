@@ -13,6 +13,7 @@
 class Log {
  public:
   static void OutputDebug(const std::string& s);
+  static void OutputError(const std::string& s);
   static void OutputMessage(const std::string& s);
 
   static bool debug_mode_;

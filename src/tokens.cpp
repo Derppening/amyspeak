@@ -36,7 +36,7 @@ shared_ptr<map<string, vector<string>>> Tokens::verb_tokens_ = nullptr;
 void Tokens::ReadTokensVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
     string version_string = l.substr(l.find("=") + 1, l.size());
-    cout << "Tokens library version: " << version_string << endl;
+    Log::OutputMessage("Tokens library version: " + version_string);
   }
 }
 
@@ -52,17 +52,17 @@ Tokens::Tokens(ifstream& file) {
   ReadTokensVersion(file_lines->at(0));
 
   // place the tokens into the map
-  cout << "Initializing tokens... ";
+  Log::OutputDebug("Initialization of Tokens started");
   ConstructTokens(*file_lines);
-  cout << "Done." << endl;
+  Log::OutputDebug("Initialization of Tokens complete");
 
   // place the verb tokens into the verb map
-  cout << "Initializing verb tokens... ";
+  Log::OutputDebug("Initialization of Verb Tokens started");
   ConstructVerbTokens(*file_lines);
   if (verb_tokens_->size() != 0) {
-    cout << "Done." << endl;
+    Log::OutputDebug("Initialization of Verb Tokens complete");
   } else {
-    cout << "Not found." << endl;
+    Log::OutputDebug("Verb Tokens not found. Not initializing.");
   }
 
   file_lines.reset(nullptr);

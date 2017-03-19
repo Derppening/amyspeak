@@ -47,21 +47,26 @@ namespace {
  * @param s Name of the program
  */
 void OutputHelp(const string& s) {
-  cout << "Usage: " << s << " [OPTION]..." << endl;
-  cout << "Converts a sentence to line-delimited phrases" << endl << endl;
-  cout << "  -t, --token=[FILE]\tset token file path to [FILE]" << endl;
-  cout << "  -p, --pattern=[FILE]\tset pattern file path to [FILE]" << endl;
-  cout << "      --help\t\tdisplay this help and exit" << endl;
-  cout << "      --version\t\toutput version information and exit" << endl;
+  string message{""};
+  message += "Usage: " + s + " [OPTION]...\n";
+  message += "Converts a sentence to newline-delimited phrases\n";
+  message += "  -d, --debug\t\tdisplays additional debug messages\n";
+  message += "  -p, --pattern=[FILE]\tset pattern file path to [FILE]\n";
+  message += "  -t, --token=[FILE]\tset token file path to [FILE]\n";
+  message += "      --help\t\tdisplay this help and exit\n";
+  message += "      --version\t\toutput version information and exit";
+  Log::OutputMessage(message);
 }
 
 /**
  * Outputs the version information to stdout.
  */
 void OutputVersionInfo() {
-  cout << "Amyspeak " << kBuildString << endl;
-  cout << "Copyright (C) 2017 David Mak" << endl;
-  cout << "Licensed under MIT." << endl;
+  string message{""};
+  message += "Amyspeak " + kBuildString + "\n";
+  message += "Copyright (C) 2017 David Mak\n";
+  message += "Licensed under MIT.";
+  Log::OutputMessage(message);
 }
 
 /**
@@ -101,8 +106,8 @@ bool ReadCommandLineArgs(const vector<string>& args, string* token_filename,
   if (pattern_filename->at(0) != '.' && pattern_filename->at(1) != '.') {
     pattern_filename->insert(0, "./");
   }
-  cout << "Reading tokens from " << *token_filename << endl;
-  cout << "Reading patterns from " << *pattern_filename << endl;
+  Log::OutputMessage("Reading tokens from " + *token_filename);
+  Log::OutputMessage("Reading patterns from " + *pattern_filename);
 
   return true;
 }
@@ -122,12 +127,12 @@ int main(int argc, char* argv[]) {
   // see if the files exist
   unique_ptr<ifstream> token_file(new ifstream(token_src));
   if (!token_file->is_open()) {
-    cout << "Error: Tokens file not found. Exiting." << endl;
+    Log::OutputError("Tokens file not found. Exiting.");
     return 0;
   }
   unique_ptr<ifstream> pattern_file(new ifstream(pattern_src));
   if (!pattern_file->is_open()) {
-    cout << "Error: Patterns file not found. Exiting." << endl;
+    Log::OutputError("Patterns file not found. Exiting.");
     return 0;
   }
 
@@ -142,10 +147,10 @@ int main(int argc, char* argv[]) {
   pattern_file.reset(nullptr);
 
   auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
-  cout << setprecision(4) << "Initialization complete. Took "
-       << time_taken.count() << " ms." << endl << endl;
-  cout << "Type ':clear' to clear the console, " << endl
-       << "     ':q' to quit." << endl;
+  Log::OutputMessage("Initialization complete. Took " +
+      FloatToString(time_taken.count()) + "ms.\n");
+  Log::OutputMessage("Type ':clear' to clear the console, \n"
+                         "     ':q' to quit.");
 
   while (true) {
     cout << "> ";
@@ -170,7 +175,7 @@ int main(int argc, char* argv[]) {
     DoProcessing(&input_tokens);
     OutputTokens(input_tokens);
   }
-  cout << "Exiting..." << endl;
+  Log::OutputMessage("Exiting...");
 
   return 0;
 }

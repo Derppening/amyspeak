@@ -32,7 +32,7 @@ shared_ptr<vector<vector<string>>> Patterns::patterns_ = nullptr;
 void Patterns::ReadPatternsVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
     string version_string = l.substr(l.find("=") + 1);
-    cout << "Patterns library version: " << version_string << endl;
+    Log::OutputMessage("Patterns library version: " + version_string);
   }
 }
 
@@ -71,9 +71,9 @@ Patterns::Patterns(ifstream& file) {
   ReadPatternsVersion(file_lines->at(0));
 
   // place the patterns into the vector
-  cout << "Initializing patterns...";
+  Log::OutputDebug("Initialization of Patterns started");
   ConstructPatterns(*file_lines);
-  cout << "Done." << endl;
+  Log::OutputDebug("Initialization of Patterns complete");
 
   file_lines.reset(nullptr);
 }

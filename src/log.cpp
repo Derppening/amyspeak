@@ -21,6 +21,10 @@ void Log::OutputMessage(const string& s) {
   cout << s << endl;
 }
 
+void Log::OutputError(const string& s) {
+  OutputMessage("ERROR: " + s);
+}
+
 void Log::OutputDebug(const string& s) {
   if (debug_mode_) {
     OutputMessage("DEBUG: " + s);

@@ -48,11 +48,19 @@ void OutputTokens(const std::vector<std::string>& v);
 bool CheckStringLength(const std::string& s, const std::size_t size);
 
 /**
-   * Converts the ifstream into a vector storing lines of the file.
-   *
-   * @param file ifstream of the pattern file
-   * @return Pointer to vector of lines
-   */
+ * Converts the ifstream into a vector storing lines of the file.
+ *
+ * @param file ifstream of the pattern file
+ * @return Pointer to vector of lines
+ */
 std::unique_ptr<std::vector<std::string>> ParseFile(std::ifstream& file);
+
+/**
+ * Converts a float value to a string.
+ *
+ * @param d Double value
+ * @return String
+ */
+std::string FloatToString(double d);
 
 #endif  // AMYSPEAK_UTIL_H_

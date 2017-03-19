@@ -7,8 +7,10 @@
 #include "util.h"
 
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -18,8 +20,10 @@ using std::cout;
 using std::endl;
 using std::ifstream;
 using std::make_unique;
+using std::setprecision;
 using std::size_t;
 using std::string;
+using std::stringstream;
 using std::transform;
 using std::unique_ptr;
 using std::vector;
@@ -101,4 +105,10 @@ unique_ptr<vector<string>> ParseFile(ifstream& file) {
   // write resulting vector into smart pointer
   auto ptr = make_unique<vector<string>>(v);
   return ptr;
+}
+
+string FloatToString(double d) {
+  stringstream ss;
+  ss << setprecision(4) << d;
+  return ss.str();
 }
