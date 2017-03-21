@@ -107,7 +107,7 @@ void DoProcessing(vector<string>* i) {
   }
 }
 
-bool ProcessCommand(string& s) {
+bool delimit::ProcessCommand(string& s) {
   Log::OutputDebug("ProcessCommand(\"" + s + "\")");
 
   if (s.find("exit") != string::npos ||
@@ -115,9 +115,7 @@ bool ProcessCommand(string& s) {
     cout << "Type ':q' to quit" << endl << endl;
     return true;
   } else if (s == ":clear") {
-    if (system("cls")) {
-      system("clear");
-    }
+    ClearScreen();
     return true;
   } else if (s.front() == ':') {
     Log::OutputMessage("Unknown command: " + s.substr(1));
@@ -125,4 +123,22 @@ bool ProcessCommand(string& s) {
   }
 
   return false;
+}
+
+int concat::ProcessCommand(string &s) {
+  Log::OutputDebug("ProcessCommand(\"" + s + "\")");
+
+  if (s.find("exit") != string::npos ||
+      s.find("quit") != string::npos) {
+    cout << "Type ':q' to quit" << endl << endl;
+    return State::SKIP;
+  } else if (s == ":p" || s == ":process") {
+    return State::PROCESS;
+  } else if (s == ":q") {
+    return State::EXIT;
+  } else if (s.front() == ':') {
+    Log::OutputMessage("Unknown command: " + s.substr(1));
+    return State::SKIP;
+  }
+  return State::APPEND;
 }

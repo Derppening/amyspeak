@@ -5,39 +5,15 @@
 // tokens, and does basic processing for the main loop.
 //
 
-#include <algorithm>
-#include <chrono>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
+#include "modes.h"
 #include "log.h"
-#include "patterns.h"
-#include "processing.h"
-#include "tokens.h"
-#include "util.h"
 #include "version.h"
 
-using std::chrono::duration;
-using std::chrono::steady_clock;
-using std::cin;
-using std::cout;
-using std::endl;
-using std::ifstream;
-using std::map;
-using std::setprecision;
-using std::shared_ptr;
 using std::size_t;
-using std::stoul;
 using std::string;
-using std::stringstream;
-using std::to_string;
-using std::unique_ptr;
 using std::vector;
 
 namespace {
@@ -75,9 +51,8 @@ void OutputVersionInfo() {
  * @param args Vector of command-line arguments
  * @param token_filename Filename storing tokens
  * @param pattern_filename Filename storing patterns
- * @return False if program should terminate
  */
-bool ReadCommandLineArgs(const vector<string>& args, string* token_filename,
+void ReadCommandLineArgs(const vector<string>& args, string* token_filename,
                          string* pattern_filename) {
   for (size_t i = 1; i < args.size(); ++i) {
     if (args.at(i) == "-t") {
@@ -93,10 +68,16 @@ bool ReadCommandLineArgs(const vector<string>& args, string* token_filename,
       Log::debug_mode_ = true;
     } else if (args.at(i) == "--help") {
       OutputHelp(args.at(0));
-      return false;
+      return;
     } else if (args.at(i) == "--version") {
       OutputVersionInfo();
-      return false;
+      return;
+    } else if (args.at(i) == "-m" || args.at(i) == "--merge") {
+      Log::OutputMessage("Entering Concatenation Mode");
+      ConcatMode();
+      return;
+    } else {
+      Log::OutputMessage("Warning: Unknown option " + args.at(i));
     }
   }
 
@@ -109,7 +90,7 @@ bool ReadCommandLineArgs(const vector<string>& args, string* token_filename,
   Log::OutputMessage("Reading tokens from " + *token_filename);
   Log::OutputMessage("Reading patterns from " + *pattern_filename);
 
-  return true;
+  DelimitMode(*token_filename, *pattern_filename);
 }
 }  // namespace
 
@@ -120,62 +101,8 @@ int main(int argc, char* argv[]) {
   // analyze command line switches
   string token_src = "./tokens";
   string pattern_src = "./patterns";
-  if (!ReadCommandLineArgs(argvec, &token_src, &pattern_src)) {
-    return 0;
-  }
 
-  // see if the files exist
-  unique_ptr<ifstream> token_file(new ifstream(token_src));
-  if (!token_file->is_open()) {
-    Log::OutputError("Tokens file not found. Exiting.");
-    return 0;
-  }
-  unique_ptr<ifstream> pattern_file(new ifstream(pattern_src));
-  if (!pattern_file->is_open()) {
-    Log::OutputError("Patterns file not found. Exiting.");
-    return 0;
-  }
-
-  auto time = steady_clock::now();
-
-  // read and save normal tokens
-  static Tokens tokens(*token_file);
-  token_file.reset(nullptr);
-
-  // read and save patterns
-  static Patterns patterns(*pattern_file);
-  pattern_file.reset(nullptr);
-
-  auto time_taken = duration<double, std::milli>(steady_clock::now() - time);
-  Log::OutputMessage("Initialization complete. Took " +
-      FloatToString(time_taken.count()) + "ms.\n");
-  Log::OutputMessage("Type ':clear' to clear the console, \n"
-                         "     ':q' to quit.");
-
-  while (true) {
-    cout << "> ";
-    string input;
-    getline(cin, input);
-
-    if (input == ":q") break;
-
-    string buf{};
-    stringstream ss_buf(input);
-    vector<string> input_tokens;
-    while (ss_buf >> buf) {
-      input_tokens.emplace_back(buf);
-    }
-
-    // assume that if we have one token, it is a command
-    if (input_tokens.size() == 1 &&
-        ProcessCommand(input_tokens.at(0))) {
-      continue;
-    }
-
-    DoProcessing(&input_tokens);
-    OutputTokens(input_tokens);
-  }
-  Log::OutputMessage("Exiting...");
+  ReadCommandLineArgs(argvec, &token_src, &pattern_src);
 
   return 0;
 }

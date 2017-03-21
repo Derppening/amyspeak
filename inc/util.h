@@ -63,4 +63,9 @@ std::unique_ptr<std::vector<std::string>> ParseFile(std::ifstream& file);
  */
 std::string FloatToString(double d);
 
+/**
+ * Platform-independent clear screen
+ */
+void ClearScreen();
+
 #endif  // AMYSPEAK_UTIL_H_

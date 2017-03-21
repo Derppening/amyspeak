@@ -112,3 +112,9 @@ string FloatToString(double d) {
   ss << setprecision(4) << d;
   return ss.str();
 }
+
+void ClearScreen() {
+  if (system("cls")) {
+    system("clear");
+  }
+}
