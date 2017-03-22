@@ -31,7 +31,7 @@ namespace delimit {
  * @param s String of command
  * @return True if we are skipping the processing
  */
-bool ProcessCommand(std::string &s);
+State ProcessCommand(std::string &s);
 }  // namespace delimit
 
 namespace concat {

@@ -115,13 +115,22 @@ void DelimitMode(const string& token_src, const string& pattern_src) {
     }
 
     // assume that if we have one token, it is a command
-    if (input_tokens.size() == 1 &&
-        delimit::ProcessCommand(input_tokens.at(0))) {
-      continue;
+    if (input_tokens.size() == 1) {
+      switch (delimit::ProcessCommand(input_tokens.at(0))) {
+        case State::SKIP:
+          continue;
+        case State::EXIT:
+          Log::OutputMessage("Exiting...");
+          return;
+        case State::PROCESS:
+          break;
+        default:
+          // no such state
+          break;
+      }
     }
 
     DoProcessing(&input_tokens);
     OutputTokens(input_tokens);
   }
-  Log::OutputMessage("Exiting...");
 }

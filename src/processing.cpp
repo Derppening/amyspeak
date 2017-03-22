@@ -107,22 +107,22 @@ void DoProcessing(vector<string>* i) {
   }
 }
 
-bool delimit::ProcessCommand(string& s) {
+State delimit::ProcessCommand(string& s) {
   Log::OutputDebug("ProcessCommand(\"" + s + "\")");
 
   if (s.find("exit") != string::npos ||
       s.find("quit") != string::npos) {
     Log::OutputMessage("Type ':q' to quit\n");
-    return true;
+    return State::SKIP;
   } else if (s == ":clear") {
     ClearScreen();
-    return true;
+    return State::SKIP;
   } else if (s.front() == ':') {
     Log::OutputMessage("Unknown command: " + s.substr(1));
-    return true;
+    return State::SKIP;
   }
 
-  return false;
+  return State::PROCESS;
 }
 
 State concat::ProcessCommand(string &s) {
