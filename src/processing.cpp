@@ -92,7 +92,7 @@ void DoProcessing(vector<string>* i) {
     }
 
     if (match != nullptr) {
-      for (size_t l = 1; l < match->size(); ++l)
+      for (size_t l = 1; l < match->size(); ++l) {
         if (modifier != "") {
           ++l;
           if (modifier.substr(0, 2) == "l=") {
@@ -103,6 +103,7 @@ void DoProcessing(vector<string>* i) {
         } else {
           MergeTokens(i, it);
         }
+      }
     }
   }
 }
@@ -117,6 +118,8 @@ State delimit::ProcessCommand(string& s) {
   } else if (s == ":clear") {
     ClearScreen();
     return State::SKIP;
+  } else if (s == ":q") {
+    return State::EXIT;
   } else if (s.front() == ':') {
     Log::OutputMessage("Unknown command: " + s.substr(1));
     return State::SKIP;

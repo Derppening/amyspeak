@@ -105,8 +105,6 @@ void DelimitMode(const string& token_src, const string& pattern_src) {
     string input;
     getline(cin, input);
 
-    if (input == ":q") break;
-
     string buf{};
     stringstream ss_buf(input);
     vector<string> input_tokens;
