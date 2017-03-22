@@ -11,7 +11,7 @@
 #define AMYSPEAK_TOKENS_H_
 
 #include <fstream>
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -63,8 +63,8 @@ class Tokens {
    */
   void ReadTokensVersion(const std::string&);
 
-  static std::shared_ptr<std::map<std::string, std::vector<std::string>>> tokens_;
-  static std::shared_ptr<std::map<std::string, std::vector<std::string>>> verb_tokens_;
+  static std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> tokens_;
+  static std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> verb_tokens_;
 
   friend class Patterns;
 };

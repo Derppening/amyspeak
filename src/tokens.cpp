@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <unordered_map>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -21,17 +22,18 @@ using std::endl;
 using std::ifstream;
 using std::make_shared;
 using std::make_unique;
-using std::map;
 using std::pair;
 using std::shared_ptr;
 using std::size_t;
 using std::string;
 using std::stringstream;
+using std::to_string;
+using std::unordered_map;
 using std::vector;
 using std::unique_ptr;
 
-shared_ptr<map<string, vector<string>>> Tokens::tokens_ = nullptr;
-shared_ptr<map<string, vector<string>>> Tokens::verb_tokens_ = nullptr;
+shared_ptr<unordered_map<string, vector<string>>> Tokens::tokens_ = nullptr;
+shared_ptr<unordered_map<string, vector<string>>> Tokens::verb_tokens_ = nullptr;
 
 void Tokens::ReadTokensVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
@@ -44,8 +46,8 @@ Tokens::Tokens(ifstream& file) {
   Log::OutputDebug("Tokens::Tokens()");
 
   // create the maps of tokens
-  tokens_ = make_shared<map<string, vector<string>>>();
-  verb_tokens_ = make_shared<map<string, vector<string>>>();
+  tokens_ = make_shared<unordered_map<string, vector<string>>>();
+  verb_tokens_ = make_shared<unordered_map<string, vector<string>>>();
 
   // read the file and output the version (if exists)
   unique_ptr<vector<string>> file_lines = ParseFile(file);
@@ -97,6 +99,7 @@ void Tokens::ConstructVerbTokens(const vector<string>& in) {
   // determine starting position
   for (size_t i = 0; i < in.size(); ++i) {
     if (in.at(i).find("verb") != string::npos) {
+      Log::OutputDebug("Found verb tokens at line " + to_string(i + 1));
       start_pos = i;
       break;
     }
@@ -112,7 +115,7 @@ void Tokens::ConstructVerbTokens(const vector<string>& in) {
       line_tokens.emplace_back(line_buffer);
     }
 
-    // read all tokens from vector, using first token as
+    // read all tokens from vector, using first token as key
     verb_tokens_->emplace(make_pair(line_tokens.at(0), vector<string>{}));
     for (size_t j = 1; j < line_tokens.size(); ++j) {
       verb_tokens_->at(line_tokens.at(0)).emplace_back(line_tokens.at(j));
@@ -137,9 +140,7 @@ bool Tokens::SearchVerbTokens(const string& s) {
 }
 
 bool Tokens::SearchVerbTokens(const string& s, const string& cat) {
-  try {
-    verb_tokens_->at(cat);
-  } catch (std::out_of_range) {
+  if (verb_tokens_->find(cat) == verb_tokens_->end()) {
     return false;
   }
   for (auto&& v_e : verb_tokens_->at(cat)) {

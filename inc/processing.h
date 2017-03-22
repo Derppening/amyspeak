@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-enum State {
+enum struct State {
   EXIT = -1,
   APPEND = 0,
   SKIP = 1,
@@ -41,7 +41,7 @@ namespace concat {
  * @param s String of command
  * @return State
  */
-int ProcessCommand(std::string &s);
+State ProcessCommand(std::string &s);
 }  // concat
 
 #endif //AMYSPEAK_PROCESSING_H_

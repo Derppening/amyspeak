@@ -30,3 +30,7 @@ void Log::OutputDebug(const string& s) {
     OutputMessage("DEBUG: " + s);
   }
 }
+
+void Log::OutputWarn(const string &s) {
+  OutputMessage("WARNING: " + s);
+}

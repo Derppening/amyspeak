@@ -24,13 +24,15 @@ namespace {
  */
 void OutputHelp(const string& s) {
   string message{""};
-  message += "Usage: " + s + " [OPTION]...\n";
-  message += "Converts a sentence to newline-delimited phrases\n";
+  message += "Usage: " + s + " [OPTION]... [MODE]\n";
+  message += "When [MODE] is 'merge', merges individual words into a sentence.\n";
+  message += "Otherwise, converts a sentence to newline-delimited phrases.\n\n";
   message += "  -d, --debug\t\tdisplays additional debug messages\n";
+  message += "      --help\t\tdisplay this help and exit\n";
+  message += "      --version\t\toutput version information and exit\n\n";
+  message += "If [MODE] is empty, the following switches are recognized:\n";
   message += "  -p, --pattern=[FILE]\tset pattern file path to [FILE]\n";
   message += "  -t, --token=[FILE]\tset token file path to [FILE]\n";
-  message += "      --help\t\tdisplay this help and exit\n";
-  message += "      --version\t\toutput version information and exit";
   Log::OutputMessage(message);
 }
 
@@ -54,6 +56,7 @@ void OutputVersionInfo() {
  */
 void ReadCommandLineArgs(const vector<string>& args, string* token_filename,
                          string* pattern_filename) {
+  // read all command line args
   for (size_t i = 1; i < args.size(); ++i) {
     if (args.at(i) == "-t") {
       *token_filename = args.at(++i);
@@ -72,13 +75,18 @@ void ReadCommandLineArgs(const vector<string>& args, string* token_filename,
     } else if (args.at(i) == "--version") {
       OutputVersionInfo();
       return;
-    } else if (args.at(i) == "-m" || args.at(i) == "--merge") {
-      Log::OutputMessage("Entering Concatenation Mode");
-      ConcatMode();
-      return;
+    } else if ((args.at(i) == "merge" || args.at(i) == "concatenate")) {
+      if  (i != args.size() - 1) {
+        Log::OutputWarn("merge not placed at end of command");
+      }
     } else {
-      Log::OutputMessage("Warning: Unknown option " + args.at(i));
+      Log::OutputWarn("Unknown option " + args.at(i));
     }
+  }
+
+  if (args.back() == "merge") {
+    ConcatMode();
+    return;
   }
 
   if (token_filename->at(0) != '.' && token_filename->at(1) != '.') {

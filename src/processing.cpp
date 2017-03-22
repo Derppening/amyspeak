@@ -112,7 +112,7 @@ bool delimit::ProcessCommand(string& s) {
 
   if (s.find("exit") != string::npos ||
       s.find("quit") != string::npos) {
-    cout << "Type ':q' to quit" << endl << endl;
+    Log::OutputMessage("Type ':q' to quit\n");
     return true;
   } else if (s == ":clear") {
     ClearScreen();
@@ -125,12 +125,12 @@ bool delimit::ProcessCommand(string& s) {
   return false;
 }
 
-int concat::ProcessCommand(string &s) {
+State concat::ProcessCommand(string &s) {
   Log::OutputDebug("ProcessCommand(\"" + s + "\")");
 
   if (s.find("exit") != string::npos ||
       s.find("quit") != string::npos) {
-    cout << "Type ':q' to quit" << endl << endl;
+    Log::OutputMessage("Type ':q' to quit\n");
     return State::SKIP;
   } else if (s == ":p" || s == ":process") {
     return State::PROCESS;

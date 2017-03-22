@@ -67,9 +67,6 @@ void ConcatMode() {
         tokens.clear();
       case State::SKIP:
         continue;
-      default:
-        // will not happen
-        break;
     }
   }
 }
