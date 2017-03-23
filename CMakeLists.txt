@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.6)
 project(amyspeak)
 
-set(CMAKE_CXX_STANDARD 14)
+include(compile_flags.cmake)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
+set(CMAKE_CXX_STANDARD 14)
 
 include_directories(inc)
 
