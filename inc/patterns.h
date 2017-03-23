@@ -25,8 +25,8 @@ class Patterns {
   /**
    * @return Pointer to the vector of patterns
    */
-  static std::shared_ptr<std::vector<std::vector<std::string>>> GetPatterns() {
-    return patterns_;
+  static std::vector<std::vector<std::string>>* GetPatterns() {
+    return patterns_.get();
   }
 
   /**
