@@ -4,8 +4,9 @@ A C++ console program which could concatenate or split strings by patterns.
 
 ## Getting Started
 
-These instructions will set your project up and running on your local machine.
-Note that currently only Windows platform is officially tested and supported.
+These instructions will set the project up and run the application on your 
+local machine. Note that currently only Windows platform is officially 
+tested and supported.
 
 Linux support will be added once I get to it.
 
@@ -27,8 +28,8 @@ Then run Make in the project root
 make
 ```
 
-Run either `amyspeak.exe` or `amyspeak_static.exe`. Run the program with 
-`--version` and ensure it outputs something similar to as follows:
+Run the program with `amyspeak.exe --version` and ensure it outputs something 
+similar to as follows:
 ```
 Amyspeak 2.1.1
 Copyright (C) 2017 David Mak
@@ -37,8 +38,9 @@ Licensed under MIT.
 
 ### Distributing the Binary
 
-It is strongly recommended to distribute the static version of the binary, as
-it bundled all necessary libraries to run the program. 
+It is strongly recommended to distribute the static version of the binary 
+(`amyspeak_static.exe`), as it bundles all necessary libraries to run the 
+program. 
 
 It is also recommended to attach a working copy of `patterns` and `tokens`, or 
 link the user to this page for instructions to create their own.
