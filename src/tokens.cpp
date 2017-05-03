@@ -39,6 +39,8 @@ void Tokens::ReadTokensVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
     string version_string = l.substr(l.find("=") + 1, l.size());
     Log::OutputMessage("Tokens library version: " + version_string);
+  } else {
+    Log::OutputDebug("Tokens library version not found.");
   }
 }
 
@@ -84,6 +86,7 @@ void Tokens::ConstructTokens(const vector<string>& in) {
     }
     if (l.find(":") != string::npos) {  // found a new category!
       category = l.substr(0, l.size() - 1);
+      Log::OutputDebug("Found category " + category);
       tokens_->emplace(make_pair(category, vector<string>{}));  // make new map element
     } else if (category == "verb" ||
         category == "") {  // skip if null category, or category is "verb"

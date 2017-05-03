@@ -33,6 +33,8 @@ void Patterns::ReadPatternsVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
     string version_string = l.substr(l.find("=") + 1);
     Log::OutputMessage("Patterns library version: " + version_string);
+  } else {
+    Log::OutputDebug("Patterns library version not found.");
   }
 }
 
