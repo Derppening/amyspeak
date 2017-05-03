@@ -7,10 +7,13 @@ A C++ console program which could concatenate or split strings by patterns.
 These instructions will set your project up and running on your local machine.
 Note that currently only Windows platform is officially tested and supported.
 
+Linux support will be added once I get to it.
+
 ### Prerequisites
 
 * [CMake 3.7.0+](https://cmake.org/download/)
-* Any C++14-supported compiler ([MinGW-w64 6.3.0](https://sourceforge.net/projects/mingw-w64/))
+* Any C++14-supported compiler 
+    * Windows: [MinGW-w64 6.3.0](https://sourceforge.net/projects/mingw-w64/)
 
 ### Compiling and Running
 
@@ -115,7 +118,9 @@ interpreted. Those include:
 
 ## Versioning
 
-There used to be no specific versioning system. Beginning with release 2.1.2, 
+There used to be no specific versioning system. 
+
+Beginning with release 2.1.2, 
 [SemVer](http://semver.org/) will be used. For all releases, see 
 [tags on this repository](https://github.com/Derppening/amyspeak/tags).
 
