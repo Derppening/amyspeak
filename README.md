@@ -154,7 +154,7 @@ speech.
 
 ## Authors
 
-* David Mak - [Derppening](https://github.com/Derppening)
+* **David Mak** - [Derppening](https://github.com/Derppening)
 
 ## License
 
@@ -164,5 +164,5 @@ details.
 
 ## Acknowledgements
 
-* Amy: For inspiring me to make this project
+* Amy, for inspiring me to make this project
 * Anyone who has helped me or offered me suggestions
