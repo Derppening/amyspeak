@@ -23,7 +23,7 @@ namespace {
  * @param s Name of the program
  */
 void OutputHelp(const string& s) {
-  string message{""};
+  string message;
   message += "Usage: " + s + " [OPTION]... [MODE]\n";
   message += "When [MODE] is 'merge', merges individual words into a sentence.\n";
   message += "Otherwise, converts a sentence to newline-delimited phrases.\n\n";
@@ -40,7 +40,7 @@ void OutputHelp(const string& s) {
  * Outputs the version information to stdout.
  */
 void OutputVersionInfo() {
-  string message{""};
+  string message;
   message += "Amyspeak " + kBuildString + "\n";
   message += "Copyright (C) 2017 David Mak\n";
   message += "Licensed under MIT.";

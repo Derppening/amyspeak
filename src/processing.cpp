@@ -29,7 +29,8 @@ void DoProcessing(vector<string>* i) {
     // input vector size checks
     if (i->size() <= 1) {
       break;
-    } else if (it + 1 >= i->size()) {
+    }
+    if (it + 1 >= i->size()) {
       break;
     }
 
@@ -37,11 +38,12 @@ void DoProcessing(vector<string>* i) {
     if (i->at(it).back() == ',') {  // (.+),
       i->at(it).pop_back();
       continue;
-    } else if ((i->at(it).back()) == '.' &&
+    }
+    if ((i->at(it).back()) == '.' &&
         (i->at(it).at(i->at(it).size() - 2)) != '.') {  // (.+)(\.\.)
       i->at(it).pop_back();
       continue;
-    } else if (i->at(it).find("\'") != string::npos) {  // (.*\'.*) i.e. contractions
+    } else if (i->at(it).find('\'') != string::npos) {  // (.*\'.*) i.e. contractions
       MergeTokens(i, it);
       continue;
     }
@@ -93,7 +95,7 @@ void DoProcessing(vector<string>* i) {
 
     if (match != nullptr) {
       for (size_t l = 1; l < match->size(); ++l) {
-        if (modifier != "") {
+        if (!modifier.empty()) {
           ++l;
           if (modifier.substr(0, 2) == "l=") {
             MergeTokens(i, it, stoul(modifier.substr(2)));
@@ -115,12 +117,15 @@ State delimit::ProcessCommand(string& s) {
       s.find("quit") != string::npos) {
     Log::OutputMessage("Type ':q' to quit\n");
     return State::SKIP;
-  } else if (s == ":clear") {
+  }
+  if (s == ":clear") {
     ClearScreen();
     return State::SKIP;
-  } else if (s == ":q") {
+  }
+  if (s == ":q") {
     return State::EXIT;
-  } else if (s.front() == ':') {
+  }
+  if (s.front() == ':') {
     Log::OutputMessage("Unknown command: " + s.substr(1));
     return State::SKIP;
   }
@@ -135,11 +140,14 @@ State concat::ProcessCommand(string &s) {
       s.find("quit") != string::npos) {
     Log::OutputMessage("Type ':q' to quit\n");
     return State::SKIP;
-  } else if (s == ":p" || s == ":process") {
+  }
+  if (s == ":p" || s == ":process") {
     return State::PROCESS;
-  } else if (s == ":q") {
+  }
+  if (s == ":q") {
     return State::EXIT;
-  } else if (s.front() == ':') {
+  }
+  if (s.front() == ':') {
     Log::OutputMessage("Unknown command: " + s.substr(1));
     return State::SKIP;
   }

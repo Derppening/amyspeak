@@ -20,7 +20,7 @@
 using std::cout;
 using std::endl;
 using std::ifstream;
-using std::make_unique;
+using std::make_shared;
 using std::shared_ptr;
 using std::string;
 using std::stringstream;
@@ -31,7 +31,7 @@ shared_ptr<vector<vector<string>>> Patterns::patterns_ = nullptr;
 
 void Patterns::ReadPatternsVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
-    string version_string = l.substr(l.find("=") + 1);
+    string version_string = l.substr(l.find('=') + 1);
     Log::OutputMessage("Patterns library version: " + version_string);
   } else {
     Log::OutputDebug("Patterns library version not found.");
@@ -66,7 +66,7 @@ Patterns::Patterns(ifstream& file) {
   Log::OutputDebug("Patterns::Patterns()");
 
   // create the vector of patterns
-  patterns_ = make_unique<vector<vector<string>>>();
+  patterns_ = make_shared<vector<vector<string>>>();
 
   // read the file and output the version (if exists)
   unique_ptr<vector<string>> file_lines = ParseFile(file);
@@ -101,12 +101,14 @@ void Patterns::ConstructPatterns(const vector<string>& in) {
 string Patterns::ReadPatternType(const string& s) {
   if (s.front() == '\"' && s.back() == '\"') {  // literals
     return ("L" + s.substr(1, s.size() - 2));
-  } else if (s.substr(0, 3) == "to_") {  // verbs
+  }
+
+  if (s.substr(0, 3) == "to_") {  // verbs
     if (s.at(3) == '*') {  // verb wildcard
       return "VW";
-    } else {
-      return ("V" + s);
     }
+
+    return ("V" + s);
   } else if (s.at(0) == '*') {  // wildcard
     return "W";
   } else if (s.at(0) == '!') {  // modifier

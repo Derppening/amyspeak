@@ -96,7 +96,8 @@ unique_ptr<vector<string>> ParseFile(ifstream& file) {
     }
     if (buffer_line.find("//") != string::npos) {  // read "//" as single-line comment
       continue;
-    } else if (buffer_line == "") {  // do not read empty lines
+    }
+    if (buffer_line.empty()) {  // do not read empty lines
       continue;
     }
     v.emplace_back(buffer_line);
@@ -114,7 +115,7 @@ string FloatToString(double d) {
 }
 
 void ClearScreen() {
-  if (system("cls")) {
+  if (static_cast<bool>(system("cls"))) {
     system("clear");
   }
 }

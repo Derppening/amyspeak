@@ -37,7 +37,7 @@ shared_ptr<unordered_map<string, vector<string>>> Tokens::verb_tokens_ = nullptr
 
 void Tokens::ReadTokensVersion(const string& l) {
   if (l.find("VERSION") != string::npos) {
-    string version_string = l.substr(l.find("=") + 1, l.size());
+    string version_string = l.substr(l.find('=') + 1, l.size());
     Log::OutputMessage("Tokens library version: " + version_string);
   } else {
     Log::OutputDebug("Tokens library version not found.");
@@ -63,7 +63,7 @@ Tokens::Tokens(ifstream& file) {
   // place the verb tokens into the verb map
   Log::OutputDebug("Initialization of Verb Tokens started");
   ConstructVerbTokens(*file_lines);
-  if (verb_tokens_->size() != 0) {
+  if (!verb_tokens_->empty()) {
     Log::OutputDebug("Initialization of Verb Tokens complete");
   } else {
     Log::OutputDebug("Verb Tokens not found. Not initializing.");
@@ -79,17 +79,17 @@ Tokens::~Tokens() {
 }
 
 void Tokens::ConstructTokens(const vector<string>& in) {
-  string category{""};
+  string category;
   for (auto l : in) {  // read all lines from vector
     if (l.back() == '\r') {
       l.pop_back();
     }
-    if (l.find(":") != string::npos) {  // found a new category!
+    if (l.find(':') != string::npos) {  // found a new category!
       category = l.substr(0, l.size() - 1);
       Log::OutputDebug("Found category " + category);
       tokens_->emplace(make_pair(category, vector<string>{}));  // make new map element
     } else if (category == "verb" ||
-        category == "") {  // skip if null category, or category is "verb"
+        category.empty()) {  // skip if null category, or category is "verb"
       continue;
     } else {
       tokens_->at(category).emplace_back(l);  // write into map.second
@@ -110,7 +110,7 @@ void Tokens::ConstructVerbTokens(const vector<string>& in) {
 
   // read tokens from starting position, until we hit a new category, or
   // we reach end of the vector
-  for (size_t i = start_pos + 1; in.at(i).find(":") == string::npos; ++i) {
+  for (size_t i = start_pos + 1; in.at(i).find(':') == string::npos; ++i) {
     string line_buffer{};
     stringstream ss_buf(in.at(i));
     vector<string> line_tokens{};

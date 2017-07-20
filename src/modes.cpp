@@ -60,15 +60,16 @@ void ConcatMode() {
         break;
       case State::PROCESS:
         ClearScreen();
-        for (string s : tokens) {
+        for (const auto& s : tokens) {
           sentence += (s + " ");
         }
         Log::OutputMessage(sentence);
         tokens.clear();
+        [[fallthrough]];
       case State::SKIP:
         continue;
       default:
-        // no such case
+        // all cases covered
         break;
     }
   }
@@ -77,12 +78,12 @@ void ConcatMode() {
 void DelimitMode(const string& token_src, const string& pattern_src) {
   // see if the files exist
   unique_ptr<ifstream> token_file(new ifstream(token_src));
-  if (!token_file->is_open()) {
+  if (!*token_file) {
     Log::OutputError("Tokens file not found. Exiting.");
     return;
   }
   unique_ptr<ifstream> pattern_file(new ifstream(pattern_src));
-  if (!pattern_file->is_open()) {
+  if (!*pattern_file) {
     Log::OutputError("Patterns file not found. Exiting.");
     return;
   }
